@@ -7,6 +7,15 @@
 </head>
 <body>
     <h1>hellow world</h1>
-    <h3>{{Var}}</h3>
+    {% for name in user %}
+    <h3>{{name['email']}}</h3>
+    {%endfor%}
+    <form method="POST">
+        Username:<input type="text" name="username"><br>
+        Email:<input type="email" name="email"><br>
+        Password:<input type="password" name="password"><br>
+        Reenter Password:<input type="password" name="re-password"><br>
+        <input type="submit">
+    </form>
 </body>
 </html>
