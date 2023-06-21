@@ -3,18 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>ShowPass</title>
 </head>
 <body>
-    <h1>hellow world</h1>
-    {% for name in user %}
-    <h3>{{name['email']}}</h3>
-    {%endfor%}
+    <h1>Login</h1>
     <form method="POST">
-        Username:<input type="text" name="username"><br>
         Email:<input type="email" name="email"><br>
         Password:<input type="password" name="password"><br>
-        Reenter Password:<input type="password" name="re-password"><br>
         <input type="submit">
     </form>
 </body>
