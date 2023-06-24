@@ -1,16 +1,16 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ShowPass</title>
+    <title>Redirect Page</title>
+    <script>
+        window.onload = function() {
+            // Redirect to another page
+            window.location.href = "/";
+        };
+    </script>
 </head>
 <body>
-    <h1>Login</h1>
-    <form method="POST">
-        Email:<input type="email" name="email"><br>
-        Password:<input type="password" name="password"><br>
-        <input type="submit">
-    </form>
+    <!-- Optional content for the redirect page -->
+    <h1>Redirecting...</h1>
 </body>
 </html>

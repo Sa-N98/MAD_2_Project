@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Page Title</title>
+<title>ShowPass</title>
 
 <style>
 body {
@@ -38,7 +38,7 @@ width: 313px;
 }
 
 
-input[type=text] ,input[type=password]{
+input[type=text] ,input[type=password],input[type=email]{
   color: white;
   width: 100%;
   padding: 12px 20px;
@@ -142,7 +142,7 @@ margin: 0;
         <input type="hidden" name="username" value="none">
 
         <label for="lname">Email</label>
-        <input type="text"  name="email" placeholder="Your Email" required>
+        <input type="email"  name="email" placeholder="Your Email" required>
 
         <label for="lname">Password</label>
         <input type="password"  name="password" placeholder="Your Password" required>
@@ -160,7 +160,7 @@ margin: 0;
         <input type="text"  name="username" placeholder="Your Username" required>
 
         <label for="lname">Email</label>
-        <input type="text"  name="email" placeholder="Your Email" required>
+        <input type="email"  name="email" placeholder="Your Email" required>
 
         <label for="lname">Password</label>
         <input type="password"  name="password" placeholder="Your Password" required>
@@ -210,24 +210,7 @@ console.log('right')
 });
 
 
-//trigers click on button to invoke animation//
-let signupButton = document.getElementById("signupButton")
 
-signupButton.addEventListener('click', function() { 
-  
-  fetch('/click').then(function(response) {
-                    return response.text();
-                })
-                .then(function(message) {
-                     if(message==='true'){
-                      button.click();
-                     };  // Display the response message
-                })
-                .catch(function(error) {
-                    console.error('Error:', error);
-                });
-
-})
 
 // submition of signup form
 let signupForm=document.getElementById('signupForm')
@@ -257,6 +240,27 @@ signupForm.addEventListener("submit", function(event) {
     // Handle network or other errors
   });
 });
+
+
+//trigers click on button to invoke animation//
+let signupButton = document.getElementById("signupButton")
+
+
+signupButton.addEventListener('click', function() { 
+  
+  fetch('/click').then(function(response) {
+                    return response.text();
+                })
+                .then(function(message) {
+                     if(message==='true'){
+                      if(signupForm.checkValidity() === true){button.click();}
+                     };  // Display the response message
+                })
+                .catch(function(error) {
+                    console.error('Error:', error);
+                });
+
+})
 
 </script>
 
