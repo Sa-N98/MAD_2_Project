@@ -2,6 +2,9 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_security import  UserMixin, RoleMixin
 db = SQLAlchemy()
 
+
+
+# This models is used for user sign up and login
 roles_users= db.Table('roles_users',
                       db.Column('user_id', db.Integer, db.ForeignKey('User.id')),
                       db.Column('role_id', db.Integer, db.ForeignKey('Role.id'))
