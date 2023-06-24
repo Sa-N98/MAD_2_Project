@@ -123,44 +123,56 @@ button:hover {
   background-color: #d00030;
 }
 
-
+#massage{
+color: #ccc;
+font-family: Arial, Helvetica, sans-serif;
+position: relative;
+top: -26px;
+margin: 0;
+  
+}
 </style>
 </head>
 <body>
 <div id='mainBox'>
   <div id='loginSignupBox' >
-    <div id=login>
-      <form action="/action_page.php">
+    <div id=login >
+      <form  method="POST" >
+        <input type="hidden" name="form_type" value="login">
+        <input type="hidden" name="username" value="none">
 
         <label for="lname">Email</label>
-        <input type="text" id="lname" name="email" placeholder="Your Email">
+        <input type="text"  name="email" placeholder="Your Email" required>
 
         <label for="lname">Password</label>
-        <input type="password" id="lname" name="password" placeholder="Your Password">
-
+        <input type="password"  name="password" placeholder="Your Password" required>
 
         <input type="submit" value="LOGIN">
       </form>
     </div>
 
 
-    <div id=signup>
-      <form action="/action_page.php">
+    <div id=signup >
+      <form method="POST" id="signupForm" >
+        <input type="hidden" name="form_type" value="signup">
+
         <label for="fname">User Name</label>
-        <input type="text" id="fname" name="username" placeholder="Your Username">
+        <input type="text"  name="username" placeholder="Your Username" required>
 
         <label for="lname">Email</label>
-        <input type="text" id="lname" name="email" placeholder="Your Email">
+        <input type="text"  name="email" placeholder="Your Email" required>
 
         <label for="lname">Password</label>
-        <input type="password" id="lname" name="password" placeholder="Your Password">
+        <input type="password"  name="password" placeholder="Your Password" required>
 
 
-        <input type="submit" value="SIGNUP">
+        <input type="submit" value="SIGNUP" id="signupButton">
       </form>
     </div>
   </div>
+  <p id="massage">{{massage}}</p>
   <button>SIGNUP</button>
+  
 </div>
 
 
@@ -195,6 +207,53 @@ console.log('right')
 
 });
       
+let signupButton = document.getElementById("signupButton")
+
+signupButton.addEventListener('click', function() { 
+  
+  fetch('/click').then(function(response) {
+                    return response.text();
+                })
+                .then(function(message) {
+                     if(message==='true'){
+                      button.click();
+                     };  // Display the response message
+                })
+                .catch(function(error) {
+                    console.error('Error:', error);
+                });
+
+})
+
+
+let signupForm=document.getElementById('signupForm')
+
+signupForm.addEventListener("submit", function(event) {
+  event.preventDefault(); // Prevent form from submitting normally
+
+  // Get form data
+  var formData = new FormData(signupForm);
+
+  // Send form data to Flask route
+  fetch("/submit", {
+    method: "POST",
+    body: formData
+  })
+  .then(function(response) {
+    // Handle response from the Flask route
+    if (response.ok) {
+      console.log('Successful submmition')
+      // Do something with the response data
+    } else {
+      // Error occurred
+      // Handle the error
+    }
+  })
+  .catch(function(error) {
+    // Handle network or other errors
+  });
+});
+
 </script>
 
 </body>

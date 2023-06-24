@@ -5,7 +5,7 @@ from wtforms.validators import DataRequired
 from wtforms import StringField, PasswordField, SubmitField
 from flask import Flask, render_template, request, redirect, url_for
 from flask_security import Security, SQLAlchemyUserDatastore, login_required, logout_user, login_user
-from flask_security.utils import hash_password
+from flask_security.utils import hash_password, verify_password
 
 current_dir = os.path.abspath(os.path.dirname(__file__))
 
@@ -23,16 +23,101 @@ app.app_context().push()
 user_datastore=SQLAlchemyUserDatastore(db, User, Role)
 security= Security(app, user_datastore)
 
+# @app.route("/", methods=['POST','GET'])
+# def index():
+#     if request.method =="POST":
+#         user_datastore.create_user(username=request.form.get('username'),
+#                                    email=request.form.get('email'),
+#                                    password= hash_password(request.form.get('password')))
+#         db.session.commit()
+#         return redirect(url_for('login'))
+#     hat="hat"
+#     return render_template('index.html',var=hat)
+
+
+# @app.route("/", methods=['POST','GET'])
+# def index():
+
+
+#     if request.method =="POST":
+#          form_type = request.form['form_type']
+#          username = request.form['username']
+#          email = request.form['email']
+#          password = request.form['password']
+
+
+#          if form_type == 'login':
+#             user = User.query.filter_by(email=request.form.get('email')).first()
+#             if user and verify_password(password, user.password):
+#                 login_user(user)
+#                 return redirect(url_for('profile'))
+            
+         
+#          if form_type == 'signup':
+#             user_datastore.create_user(username=request.form.get('username'),
+#                                     email=request.form.get('email'),
+#                                    password= hash_password(request.form.get('password')))
+#             db.session.commit()
+
+#     return render_template('login_and_signup_test.html')
+
+
+
+
 @app.route("/", methods=['POST','GET'])
 def index():
+
+
     if request.method =="POST":
-        user_datastore.create_user(username=request.form.get('username'),
-                                   email=request.form.get('email'),
+         form_type = request.form['form_type']
+         username = request.form['username']
+         email = request.form['email']
+         password = request.form['password']
+
+
+         if form_type == 'login':
+            user = User.query.filter_by(email=request.form.get('email')).first()
+            if user and verify_password(password, user.password):
+                login_user(user)
+                return redirect(url_for('profile'))
+            else:
+                massage="User Not Found. Please Signup"
+                return render_template('login_and_signup.html', massage=massage)
+    return render_template('login_and_signup.html')
+
+
+@app.route('/submit',methods=['POST'])
+def submit():
+    user_datastore.create_user(username=request.form.get('username'),
+                                    email=request.form.get('email'),
                                    password= hash_password(request.form.get('password')))
-        db.session.commit()
-        return redirect(url_for('login'))
-    hat="hat"
-    return render_template('index.html',var=hat)
+    db.session.commit()
+    return "submition"
+
+
+
+
+@app.route('/click')
+def click():
+    return "true"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 @app.route('/userlogin', methods=['GET', 'POST'])
 def login():
