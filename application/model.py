@@ -24,3 +24,14 @@ class Role(db.Model,RoleMixin):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, unique=True, nullable=False)
     description= db.Column(db.String,nullable=False)
+
+class show(db.Model):
+    __tablename__ = 'show'
+    id = db.Column(db.Integer, autoincrement=True,  primary_key=True)
+    name = db.Column(db.String, unique=True, nullable=False)
+    rating = db.Column(db.Integer, nullable=False)
+    poster = db.Column(db.String, unique=False, nullable=False)
+    posterLong = db.Column(db.String, unique=False, nullable=False)
+    venue = db.relationship("venue", secondary="Show_Venue")
+    dates = db.relationship("date", secondary="Show_Venue")
+    genre = db.relationship("genre", secondary="movie_g")
