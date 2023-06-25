@@ -25,6 +25,8 @@ class Role(db.Model,RoleMixin):
     name = db.Column(db.String, unique=True, nullable=False)
     description= db.Column(db.String,nullable=False)
 
+
+# This models is used for shows and venues
 class show(db.Model):
     __tablename__ = 'show'
     id = db.Column(db.Integer, autoincrement=True,  primary_key=True)
