@@ -15,13 +15,9 @@ app.config['SECURITY_PASSWORD_SALT'] = 'salt'
 db.init_app(app)
 app.app_context().push()
 
-   
 
 user_datastore=SQLAlchemyUserDatastore(db, User, Role)
 security= Security(app, user_datastore)
-
-
-
 
 '''
 lodes the login and sign up page.
@@ -31,8 +27,6 @@ this route is also used for login validation.
 def index():
     if request.method =="POST":
          form_type = request.form['form_type']
-         username = request.form['username']
-         email = request.form['email']
          password = request.form['password']
 
          if form_type == 'login':
@@ -48,7 +42,7 @@ def index():
 
 
 '''
-This route is used for submition od the sign up form.
+This route is used for submition of the sign up form.
 the form is submitted using js.
 '''
 @app.route('/submit',methods=['POST'])
@@ -59,30 +53,9 @@ def submit():
     db.session.commit()
     return "submition"
 
-
-
-
 @app.route('/click')
 def click():
     return "true"
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 @app.route('/profile')
