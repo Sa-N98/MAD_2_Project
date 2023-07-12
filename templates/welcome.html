@@ -49,10 +49,11 @@
         }
         
         .animation{
-        animation-name: example;
-        animation-duration: 0.3s;
-        animation-timing-function: ease-in;
-        animation-fill-mode: forwards;
+            animation: example 0.3s ease-in forwards;
+            -webkit-animation: example 0.3s ease-in forwards;
+            -moz-animation: example 0.3s ease-in forwards;
+            -o-animation: example 0.3s ease-in forwards;
+            -ms-animation: example 0.3s ease-in forwards;
         }
 
         ul {
@@ -439,7 +440,7 @@
                     <div class='summary'>
                         <p>{{ summary }}.</p>
                     </div>
-                <button  onclick="location.href='http://www.youtube.com'" type="button">Booke A Ticket </button>
+                <button  @click="openLink" type="button">Booke A Ticket </button>
                 </div>
 	        </div>
             </div>
@@ -452,6 +453,7 @@
                     poster:'',
                     rating:'',
                     summary:'',
+                    show_id:'/booking/'
                 }
             },
 
@@ -461,6 +463,8 @@
                     .then(response => {
                         this.rating=response.data.rating
                         this.poster=response.data.poster
+                        let id=response.data.id
+                        this.show_id=this.show_id+id
                     })
                     .catch(error => {
                         console.error(error);
@@ -474,6 +478,13 @@
                         console.error(error);
                     });
             },
+
+            methods:{
+                openLink(){
+                // window.open(this.show_id);
+                window.location.href =this.show_id
+                }
+            }
         })
         app.mount('#app');
 

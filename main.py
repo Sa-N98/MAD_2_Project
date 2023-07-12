@@ -83,7 +83,7 @@ def movies():
 def movie(title):
     Show = show.query.filter(show.name == title).all()
     movie_data= {
-            'name': Show[0].name,
+            'id': Show[0].id,
             'poster':Show[0].poster,
             'rating':Show[0].rating,
             }
@@ -133,6 +133,12 @@ def filter():
             return render_template('filter.html', g=m_genre, v=m_venue, r=m_rating, movies=movie)
   
 
+@app.route("/booking/<i>", methods=["GET", "POST"])
+def booking_page(i):
+    movie = show.query.filter(show.id == i).first()
+    info = Show_Venue.query.filter(Show_Venue.s_id == i).all()
+    # date = date.query.all()
+    return render_template('booking.html', infos=info, movie=movie)
 
 # use this rout in link in template to log out 
 @app.route('/logout')

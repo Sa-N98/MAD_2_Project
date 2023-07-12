@@ -1,0 +1,19 @@
+[[ movie.name ]]
+<br>
+[[ movie.poster ]]
+<br>
+[[ movie.posterLong ]]
+<br>
+{% for venue in movie.venue %}
+    {% for date in movie.dates %}
+        {% for info in infos %}
+            {% if venue.id == info.v_id %}
+            {% if date.id == info.d_id %}
+            [[ venue.name ]] : [[ venue.place ]] => [[ info.seats ]] : [[ info.price ]]
+            [[ date.dates ]]
+            <br>
+            {%endif%}
+            {%endif%}
+        {%endfor%}
+    {%endfor%}
+{%endfor%}
