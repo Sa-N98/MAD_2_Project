@@ -135,10 +135,24 @@ def filter():
 
 @app.route("/booking/<i>", methods=["GET", "POST"])
 def booking_page(i):
+    return render_template('booking.html')
+@app.route("/api/show-booking-data/<i>", methods=["GET", "POST"])
+def show_booking_data(i):
     movie = show.query.filter(show.id == i).first()
-    info = Show_Venue.query.filter(Show_Venue.s_id == i).all()
-    # date = date.query.all()
-    return render_template('booking.html', infos=info, movie=movie)
+    infos = Show_Venue.query.filter(Show_Venue.s_id == i).all()
+    venues=list()
+    for venue in movie.venue:
+        for date in movie.dates:
+            for info in infos:
+                if venue.id==info.v_id and date.id==info.d_id:
+                     venues.append([venue.name,venue.place,date.dates,info.seats,info.price])
+    shows={
+       'name':movie.name,
+       'poster':movie.poster,
+       'posterLong':movie.posterLong,
+       'venues':venues
+    }
+    return jsonify(shows)
 
 # use this rout in link in template to log out 
 @app.route('/logout')
