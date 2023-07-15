@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,46 +10,72 @@
     <title>Vue</title>
     <style>
         * {
-          margin: 0;
-          font-family: Arial, Helvetica, sans-serif;
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
         }
-    
-        body{
+
+        body {
             background-color: #090C1A;
         }
-        
+
         .carousel {
-          width: 100%;
-          height: 705px;
-          background-color: #090C1A;
-          overflow: hidden;
-          position: relative; /* Add this */
+            width: 100%;
+            height: 80vw;
+            max-height: 600px;
+            overflow: hidden;
+            translate: 0PX -12%;
         }
-        
+
         .carousel img {
-          width: 100%;
-          position: relative;
-          top: -122px;
-          filter: brightness(60%);
-          opacity:0;
+            position: relative;
+            top: 0;
+            left: 50%;
+            translate: -50%;
+            width: 100%;
+            min-width: 1200px;
+            filter: brightness(60%);
+            transition: top 0.35s ease;
         }
-        
+
+        @media (max-width: 600px) {
+            .carousel img {
+                top: 12px;
+                /* Maximum value for top at 600px */
+            }
+        }
+
         .carousel h1 {
-          color: #ebebeb;
-          position: absolute;
-          z-index: 10;
-          top:395px;
-          left:20px;
-          font-size:170px;
-          opacity:1
+            color: #ebebeb;
+            position: absolute;
+            z-index: 10;
+            top: 395px;
+            left: 20px;
+            font-size: 170px;
+            opacity: 1;
+            transition: top 0.35s ease;
+            transition: width 0.35s ease;
+            transition: text-align 0.35s ease;
         }
-        
+
+        @media (max-width: 600px) {
+            .carousel h1 {
+                top: 280px;
+                width: 100%;
+                text-align: center;
+            }
+        }
+
         @keyframes example {
-          0% {opacity:0;}
-          100% {opacity:1;}
+            0% {
+                opacity: 0;
+            }
+
+            100% {
+                opacity: 1;
+            }
         }
-        
-        .animation{
+
+        .animation {
             animation: example 0.3s ease-in forwards;
             -webkit-animation: example 0.3s ease-in forwards;
             -moz-animation: example 0.3s ease-in forwards;
@@ -57,71 +84,106 @@
         }
 
         ul {
-        list-style-type: none;
-        margin: 0;
-        padding: 0;
-        overflow: hidden;
-        background-color:  #090C1A;
-        box-shadow: 0 1px 10px 0 rgba(0, 0, 0, 0.5);
-        height: 50px;
-        position: absolute; /* Add this */
-        top: 0; /* Add this */
-        left: 0; /* Add this */
-        right: 0; /* Add this */
-        z-index: 10;
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: #090C1A;
+            box-shadow: 0 1px 10px 0 rgba(0, 0, 0, 0.5);
+            height: 50px;
+            position: absolute;
+            /* Add this */
+            top: 0;
+            /* Add this */
+            left: 0;
+            /* Add this */
+            right: 0;
+            /* Add this */
+            z-index: 10;
         }
 
         li {
-        float: left;
+            float: left;
         }
 
         li a {
-        display: block;
-        color: white;
-        text-align: center;
-        padding: 14px 16px;
-        text-decoration: none;
-        height: 50px;
+            display: block;
+            color: white;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+            height: 50px;
         }
 
         li a:hover:not(.active) {
-        background-color:#d00030;
+            background-color: #d00030;
         }
 
         .active {
-        background-color: #ff033e;
-        }
-        
-
-        .search{
-        position:relative;
-        top:-121px;
-        width:100%;
-        height:190px;
-        background: rgb(9,12,26);
-        background: linear-gradient(0deg, rgba(9,12,26,1) 40%, rgba(0,0,0,0) 100%);
-        overflow: hidden;
+            background-color: #ff033e;
         }
 
-        form{
-        position:relative;
-        top:120px;
-        left:33px;
-        color:white;
-        font-size:30px;
-        font-weight: 900;
-        letter-spacing: 3px;
+
+        .search {
+            position: relative;
+            top: -230px;
+            width: 100%;
+            height: 214px;
+            background: rgb(9, 12, 26);
+            background: linear-gradient(0deg, rgba(9, 12, 26, 1) 51%, rgba(0, 0, 0, 0) 100%);
+            overflow: hidden;
+            transition: background 0.25s ease;
+            transition: height 0.25s ease;
+        }
+
+        @media(max-width:612px) {
+            .search {
+                background: linear-gradient(0deg, rgba(9, 12, 26, 1) 55%, rgba(0, 0, 0, 0) 100%);
+                height: 470px;
+            }
+        }
+
+        form {
+            position: relative;
+            top: 137px;
+            left: 52%;
+            transform: translate(-50%, 1px);
+            color: white;
+            font-size: 30px;
+            font-weight: 900;
+            letter-spacing: 3px;
         }
 
         select {
             width: 18%;
-            padding: 16px 20px;
+            padding: 12px 0px;
             border: none;
             border-radius: 4px;
-            background-color: #f1f1f1;
-            margin-right:20px;
+            background: rgba(139, 139, 139, 0.3);
+            backdrop-filter: saturate(200%) blur(7px);
+            margin-right: 20px;
             text-align: center;
+            font-size: 21px;
+            font-weight: 100;
+            transition: width 0.25s ease;
+            color: azure;
+        }
+
+        select option {
+            background: rgb(46 50 70);
+        }
+
+
+        @media(max-width:612px) {
+            select {
+                width: 98%;
             }
+
+            input[type=submit] {
+                width: 98%;
+            }
+        }
+
         input[type=submit] {
             color: #ffffff;
             background-color: #ff033e;
@@ -131,63 +193,67 @@
             cursor: pointer;
             border: none;
             text-align: center;
-            }
-
-        input[type=submit]:hover {
-          color: #fafafa;
-          background-color: #ff0000;
+            transition: width 0.25s ease;
         }
 
-        .card{
-            padding:0px;
-            margin:10px;
-            width:130px;
-            height:200px;
+        input[type=submit]:hover {
+            color: #fafafa;
+            background-color: #ff0000;
+        }
+
+        .card {
+            padding: 0px;
+            margin: 10px;
+            width: 130px;
+            height: 200px;
             box-sizing: border-box;
-            overflow:hidden;
+            overflow: hidden;
             border-radius: 5px;
-            display:inline-block;
+            display: inline-block;
             font-family: Arial, Helvetica, sans-serif;
             background-color: #f1f1f1;
-            }
-            .content{
-            width:412px;
-            height:200px;
-            }
-            .card-poster{
-            background-position: center; 
-            background-repeat: no-repeat; 
+        }
+
+        .content {
+            width: 412px;
+            height: 200px;
+        }
+
+        .card-poster {
+            background-position: center;
+            background-repeat: no-repeat;
             background-size: cover;
-            width:130px;
-            height:100%;
-            display:inline-block;
-            }
-            .card-poster img{
-            height:100%
-            }
+            width: 130px;
+            height: 100%;
+            display: inline-block;
+        }
 
-            .info{
-            display:inline-block;
+        .card-poster img {
+            height: 100%
+        }
+
+        .info {
+            display: inline-block;
             position: relative;
-            top:-35px;
-            left:20px;
-            width:277px;
+            top: -35px;
+            left: 20px;
+            width: 277px;
             /*background-color:blue;*/
-            }
+        }
 
-            .info h1{
-            white-space: nowrap; 
-            overflow:hidden;
+        .info h1 {
+            white-space: nowrap;
+            overflow: hidden;
             text-overflow: ellipsis;
-            margin:0;
+            margin: 0;
             font-size: 35px;
             font-weight: bold;
-            }
+        }
 
-            .info button{
+        .info button {
             position: relative;
-            top:20px;
-            left:169px;
+            top: 20px;
+            left: 169px;
             border-radius: 5px;
             font-family: Arial;
             color: #292929;
@@ -196,192 +262,275 @@
             padding: 2px 7px 2px 7px;
             border: solid #828282 2px;
             text-decoration: none;
-            }
+        }
 
-            .info button:hover {
-              background: #d1d1d1;
-              text-decoration: none;
-            }
+        .info button:hover {
+            background: #d1d1d1;
+            text-decoration: none;
+        }
 
-            .summary{
+        .summary {
             position: relative;
-            width:275px;
-            height:100px;
-            left:7px;
-            top:9px;
+            width: 275px;
+            height: 100px;
+            left: 7px;
+            top: 9px;
             overflow: auto;
             /*background-color:red;*/
-            }
+        }
 
-            .summary p{
-            font-size:13.6px;
-            margin-right:15px;
+        .summary p {
+            font-size: 13.6px;
+            margin-right: 15px;
             text-align: justify;
             text-justify: inter-word;
             line-height: 1.3;
+        }
+
+        /* width */
+        ::-webkit-scrollbar {
+            width: 7px;
+        }
+
+        /* Track */
+        ::-webkit-scrollbar-track {
+            border-radius: 10px;
+        }
+
+        /* Handle */
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 10px;
+        }
+
+        /* Handle on hover */
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+
+
+        @keyframes expand-animation {
+            from {
+                width: 130px;
             }
 
-            /* width */
-            ::-webkit-scrollbar {
-              width: 7px;
+            to {
+                width: 428px;
+                box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.6), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
             }
+        }
 
-            /* Track */
-            ::-webkit-scrollbar-track {
-              border-radius: 10px;
-            }
-            
-            /* Handle */
-            ::-webkit-scrollbar-thumb {
-              background: #888; 
-              border-radius: 10px;
-            }
+        .card:hover {
+            box-shadow: 14px 15px 15px -3px rgba(0, 0, 0, 0.75);
+            ;
+        }
 
-            /* Handle on hover */
-            ::-webkit-scrollbar-thumb:hover {
-              background: #555; 
-            }
-
-
-
-            @keyframes expand-animation {
-              from {width:130px;
-              }
-              to {width:428px;
-              box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.6), 0 6px 20px 0 rgba(0, 0, 0, 0.19);}
-            }
-
-            .card:hover {
-                box-shadow: 14px 15px 15px -3px rgba(0,0,0,0.75);;
-            }
-            /*
+        /*
             .card:not(:hover) {
               animation: shrink 0.2s forwards;
             }*/
 
-            .expand {
-              animation: expand-animation 0.25s forwards;
-            }
+        .expand {
+            animation: expand-animation 0.25s forwards;
+        }
 
 
-            #library{
-            width: 1074px;
-            margin:0 auto;
-            margin-bottom:120px;
-            }
+        #library {
+            max-width: 1074px;
+            min-width: 450px;
+            width: 60vw;
+            margin: 0 auto;
+            margin-bottom: 120px;
+            top: -169px;
+            position: relative;
+        }
 
-            .rating{
-            width:50px;
-            height:22px;
-            background-color:#ff033e;
-            position:absolute;
-            margin-top:170px;
-            border-radius:0px  15px 15px 0px;
+        .rating {
+            width: 50px;
+            height: 22px;
+            background-color: #ff033e;
+            position: absolute;
+            margin-top: 170px;
+            border-radius: 0px 15px 15px 0px;
             text-align: center;
             box-sizing: border-box;
-            padding-top:3px;
+            padding-top: 3px;
             font-weight: bold;
-            color:white;
-            }
+            color: white;
+        }
 
-            #pop-massage{
-                position: absolute;
-                top: 686px;
-                left: 50%;
-                transform: translate(-50%, -50%);
+        #pop-massage {
+            position: absolute;
+            top: 525px;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: -1;
+            color: aliceblue;
+            letter-spacing: 3px;
+            transition: transform 0.3 ease-in;
+            transition: text-align 0.3 ease-in;
+        }
+
+        @keyframes popup {
+            from {
+                top: 516px;
                 z-index: -1;
-                color: aliceblue;
-                letter-spacing: 3px;
+                opacity: 0
             }
 
-            @keyframes popup{
-                from{top:746px; z-index: -1;opacity: 0}
-                to{top:686px; z-index:10;opacity: 1}
-            }
-
-            .popup{
-                animation: popup 0.25s forwards;
-            }
-
-            #greatings{
-                position: absolute;
-                top: 686px;
+            to {
+                top: 505px;
                 z-index: 10;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                color: aliceblue;
-                letter-spacing: 3px;
+                opacity: 1
             }
-            
-            @keyframes popdown{
-                from{top:686px; z-index: 10;opacity: 1;}
-                to{top:746px; z-index:-1;opacity: 0}
+        }
+
+        @media(max-width:612px) {
+            @keyframes popup {
+                from {
+                    top: 696px;
+                    z-index: -1;
+                    opacity: 0
+                }
+
+                to {
+                    top: 686px;
+                    z-index: 10;
+                    opacity: 1
+                }
             }
 
-            .popdown{
-                animation: popdown 0.25s forwards;
+            #pop-massage {
+                transform: translate(-50%, -33%);
+                text-align: center;
             }
+        }
+
+        .popup {
+            animation: popup 0.25s forwards;
+        }
+
+        #greatings {
+            position: absolute;
+            top: 504px;
+            z-index: 10;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: aliceblue;
+            letter-spacing: 3px;
+        }
+
+        @keyframes popdown {
+            from {
+                top: 504px;
+                z-index: 10;
+                opacity: 1;
+            }
+
+            to {
+                top: 515px;
+                z-index: -1;
+                opacity: 0
+            }
+        }
+
+        @media(max-width:612px) {
+            @keyframes popdown {
+                from {
+                    top: 326px;
+                    z-index: 10;
+                    opacity: 1;
+                }
+
+                to {
+                    top: 370px;
+                    z-index: -1;
+                    opacity: 0
+                }
+            }
+
+            #greatings {
+                top: 326px;
+            }
+        }
+
+        .popdown {
+            animation: popdown 0.25s forwards;
+        }
     </style>
 </head>
+
 <body>
     <div id="app">
         <!-- Nav Bar -->
         <ul>
-            <li><a class="active" href="#home"><i class="fa fa-home" style="font-size:24px;color:rgb(236, 236, 236)"></i></a></li>
+            <li><a class="active" href="#home"><i class="fa fa-home"
+                        style="font-size:24px;color:rgb(236, 236, 236)"></i></a></li>
             <li><a href="#news">My Bookings</a></li>
             <li><a href="#about">About</a></li>
             <li style="float:right"><a href="[[ url_for('logout') ]]">Logout</a></li>
-          </ul>
+        </ul>
 
         <!-- carousel -->
         <p id="greatings">Welcome @ [[ current_user.username ]]</p>>
         <img-carousel></img-carousel>
-        
+
         <p id="pop-massage">Please Select One Option</p>
         <!-- Search Bar -->
         <div class='search'>
-            <form id="form" method="POST" action="/filter" onsubmit="validateForm(event)">
-            Genre:
-            <select id="genre" name="genre" required>
-              <option value="none" selected hidden>Select an Option</option>
-              {%for i in genre %}
-              <option value="[[ i['type'] ]]">[[ i.type ]]</option>
-              {%endfor%}
-            </select>
-            
-            Place:
-            <select id="place" name="place" required>
-            <option value="none" selected hidden> Place</option>
-            {%for i in venue %}
-            <option value="[[ i.name ]]">[[ i.name ]]</option>
-            {%endfor%}
-            </select>
-            
-            Rating:
-            <select id="rating" name="rating" required>
-            <option value='none' selected hidden>Rating</option>
-            <option value=1>1</option>
-            <option value=2>2</option>
-            <option value=3>3</option>
-            <option value=4>4</option>
-            <option value=5>5</option>
-            </select>
-            <input type="submit" form="form" formmethod="post">
+            <form id="form" method="POST" action=" /filter" onsubmit="validateForm(event)">
+                Genre:
+                <select id="genre" name="genre" required>
+                    <option value="none" selected hidden>Select an Option</option>
+                    <option v-for='genre in genres' :value="genre">{{ genre }}</option>
+                </select>
+                Place:
+                <select id="place" name="place" required>
+                    <option value="none" selected hidden> Place</option>
+                    <option v-for='venue in venues' :value="venue">{{ venue }}</option>
+                </select>
+                Rating:
+                <select id="rating" name="rating" required>
+                    <option value='none' selected hidden>Rating</option>
+                    <option value=1>1</option>
+                    <option value=2>2</option>
+                    <option value=3>3</option>
+                    <option value=4>4</option>
+                    <option value=5>5</option>
+                </select>
+                <input type="submit" form="form" formmethod="post">
             </form>
         </div>
 
         <!-- Movies -->
-        <div id="library">
-            {%for movie in movies %}
-            {% if movie['venue']|length >0 %}
-            <movie-cards title= "[[ movie.name ]]"></movie-cards>
-            {%endif%}
-            {%endfor%}
+        <div id="library">        
+            <movie-cards  v-for='titles in movies' :title="titles"></movie-cards>
         </div>
-            
+
     </div>
     <script>
-        const app = Vue.createApp({});
+        const app = Vue.createApp({
+            data(){
+                return{
+                    genres:'',
+                    venues:'',
+                    movies:'',
+                }
+            },
+            mounted(){
+                axios.get('/api/welcome')
+                    .then(response => {
+                            this.genres=response.data.genres
+                            this.venues=response.data.venues_name
+                            this.movies=response.data.movie_name
+                            
+                        })
+                        .catch(error => {
+                            console.error(error);
+                        });
+            }
+        });
         app.component('img-carousel', {
             template: `
             <div class='carousel'>
@@ -394,7 +543,7 @@
                     movies: [],
                     poster: [],
                     index: 0,
-                    canvas :null,
+                    canvas: null,
                     titleElement: null
                 };
             },
@@ -408,27 +557,29 @@
                     .catch(error => {
                         console.error(error);
                     });
-                    this.canvas = document.getElementById('canvas');
-                    this.titleElement = document.getElementById('title'); 
-                    setInterval(this.changePoster, 15000);
-                    this.adjustFontSize()
+                this.canvas = document.getElementById('canvas');
+                this.titleElement = document.getElementById('title');
+                setInterval(this.changePoster, 15000);
+                this.adjustFontSize()
             },
 
-            methods:{
-                changePoster:function() {
-                            this.canvas.classList.remove('animation');
-                            this.index = (this.index + 1) % this.movies.length;
-                            setTimeout(() => {this.canvas.classList.add('animation');}, 10);
-                            },
-                adjustFontSize:function () {
-                            const titleLength = this.titleElement.textContent.length;
-                            const fontSize = 240 - titleLength * 9; 
-                            this.titleElement.style.fontSize = fontSize + 'px';
-                            }
+            methods: {
+                changePoster: function () {
+                    this.canvas.classList.remove('animation');
+                    this.index = (this.index + 1) % this.movies.length;
+                    setTimeout(() => {
+                        this.canvas.classList.add('animation');
+                    }, 10);
+                },
+                adjustFontSize: function () {
+                    const titleLength = this.titleElement.textContent.length;
+                    const fontSize = 10 - Number(titleLength);
+                    this.titleElement.style.fontSize = fontSize + 'vw';
+                }
             }
         });
-        app.component('movie-cards',{
-            template:`
+        app.component('movie-cards', {
+            template: `
             <div class='card'>
 		    <div class=content>
                 <div class= card-poster>
@@ -445,78 +596,81 @@
 	        </div>
             </div>
             `,
-            
-            props:['title'],
+
+            props: ['title'],
             data() {
-                return{ 
-                    cards:null,
-                    poster:'',
-                    rating:'',
-                    summary:'',
-                    show_id:'/booking/'
+                return {
+                    cards: null,
+                    poster: '',
+                    rating: '',
+                    summary: '',
+                    show_id: '/booking/'
                 }
             },
 
             mounted() {
-                url='/api/movie/'+this.title
+                url = '/api/movie/' + this.title
                 axios.get(url)
                     .then(response => {
-                        this.rating=response.data.rating
-                        this.poster=response.data.poster
-                        let id=response.data.id
-                        this.show_id=this.show_id+id
+                        this.rating = response.data.rating
+                        this.poster = response.data.poster
+                        let id = response.data.id
+                        this.show_id = this.show_id + id
                     })
                     .catch(error => {
                         console.error(error);
                     });
 
-                url='http://www.omdbapi.com/?t='+this.title+'&apikey=78f7079e';
+                url = 'http://www.omdbapi.com/?t=' + this.title + '&apikey=78f7079e';
                 axios.get(url)
                     .then(response => {
-                        this.summary=response.data.Plot
+                        this.summary = response.data.Plot
                     }).catch(error => {
                         console.error(error);
                     });
             },
 
-            methods:{
-                openLink(){
-                // window.open(this.show_id);
-                window.location.href =this.show_id
+            methods: {
+                openLink() {
+                    // window.open(this.show_id);//
+                    window.location.href = this.show_id
                 }
             }
         })
         app.mount('#app');
-
-        const cards = document.getElementsByClassName('card');
-        for (let i = 0; i < cards.length; i++) {
-        const card = cards[i];
-        card.addEventListener('click', function() {
-            // Remove the 'expand' class from all cards
-            for (let j = 0; j < cards.length; j++) {
-            if (cards[j] !== card) {
-                cards[j].classList.remove('expand');
-            }
-            }
-
-            // Toggle the 'expand' class on the clicked card
-            card.classList.toggle('expand');
-        });
-        }
-
+        
         function validateForm() {
             let genre = document.getElementById("genre").value;
             let place = document.getElementById("place").value;
             let rating = document.getElementById("rating").value;
-            let popup=document.getElementById("pop-massage")
-            let popdown=document.getElementById("greatings")
-            console.log(genre ,place,rating)
+            let popup = document.getElementById("pop-massage")
+            let popdown = document.getElementById("greatings")
+            console.log(genre, place, rating)
             if (genre === "none" && place === "none" && rating === "none") {
                 event.preventDefault();
                 popup.classList.add("popup");
                 popdown.classList.add("popdown");
             }
         }
+        setTimeout(() => {
+                const cards = document.getElementsByClassName('card');
+                            for (let i = 0; i < cards.length; i++) {
+                                const card = cards[i];
+                                card.addEventListener('click', function () {
+                                    // Remove the 'expand' class from all cards
+                                    for (let j = 0; j < cards.length; j++) {
+                                        if (cards[j] !== card) {
+                                            cards[j].classList.remove('expand');
+                                        }
+                                    }
+
+                                    // Toggle the 'expand' class on the clicked card
+                                    card.classList.toggle('expand');
+                                });
+                            }
+        }, 500);
     </script>
+    
 </body>
+
 </html>

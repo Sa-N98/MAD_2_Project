@@ -1,269 +1,282 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-<title>ShowPass</title>
+  <title>ShowPass</title>
 
-<style>
-body {
-  background: url("https://w.wallhaven.cc/full/0w/wallhaven-0w2de6.jpg") no-repeat center center fixed; 
-  -webkit-background-size: cover;
-  -moz-background-size: cover;
-  -o-background-size: cover;
-  background-size: cover;
-}
-
-
-#mainBox {
-width: 313px;
-  /*background-color:  #f2f2f2;*/
-  background: rgba(40,40,40,0.6);
-  backdrop-filter: saturate(200%) blur(7px);
-  box-shadow: 0 4px 18px 0 rgba(0, 0, 0, 0.5), 0 6px 20px 0 rgba(0, 0, 0, 0.9);
-  border-radius: 8px;
-  padding: 20px;
-  overflow:hidden;
-  position: relative;
-  top:50px;
-  margin: auto;
-}
-
-
-#loginSignupBox {
-  width: 597px;
-  border-radius: 5px;
-  padding: 20px;
-  /*background-color:  red;*/
-  position: relative;
-  
-}
-
-
-input[type=text] ,input[type=password],input[type=email]{
-  color: white;
-  width: 100%;
-  padding: 12px 20px;
-  margin: 10px 0px 20px 0px;
-  display: inline-block;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  box-sizing: border-box;
-  background: rgba(80,80,80,0.6);
-}
-
-input[type=submit] {
-  width: 100%;
-  background-color: #ff033e;
-  color: white;
-  padding: 14px 20px;
-  margin: 28px 0;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-input[type=submit]:hover {
-  background-color: #d00030;
-}
-
-#login{
-width: 270px;
-display: inline-block;
-margin-right: 50px;
-/*background-color:  blue;*/
-position: relative;
-top: -106px;
-margin-left:0px
-}
-
-#login.move-left{
- animation: move-l 0.5s forwards;
-}
-
-#login.move-right{
- animation: move-r 0.5s forwards;
-}
-
-
-
-@keyframes move-l {
-        from { margin-left:0px }
-        to { margin-left:-322px }
-      }
-      
-      
-@keyframes move-r {
-        from { margin-left:-322px }
-        to { margin-left:0px }
-      }
-
-#signup{
-width: 270px;
-display: inline-block;
-/*background-color:  yellow;*/
-
-}
-
-label{
-color: white;
-font-size: 30px;
-font-family: Arial, Helvetica, sans-serif;
-font-weight: bold;
-}
-
-button{
-color: white;
-width:100px;
-height:30px;
-border-radius: 5px;
-background-color: #ff033e;
-border: none;
-}
-
-button:hover {
-  background-color: #d00030;
-}
-
-#massage{
-color: #ccc;
-font-family: Arial, Helvetica, sans-serif;
-position: relative;
-top: -26px;
-margin: 0;
-  
-}
-</style>
-</head>
-<body>
-<div id='mainBox'>
-  <div id='loginSignupBox' >
-    <div id=login >
-      <form  method="POST" >
-        <input type="hidden" name="form_type" value="login">
-        <input type="hidden" name="username" value="none">
-
-        <label for="lname">Email</label>
-        <input type="email"  name="email" placeholder="Your Email" required>
-
-        <label for="lname">Password</label>
-        <input type="password"  name="password" placeholder="Your Password" required>
-
-        <input type="submit" value="LOGIN">
-      </form>
-    </div>
-
-
-    <div id=signup >
-      <form method="POST" id="signupForm" >
-        <input type="hidden" name="form_type" value="signup">
-
-        <label for="fname">User Name</label>
-        <input type="text"  name="username" placeholder="Your Username" required>
-
-        <label for="lname">Email</label>
-        <input type="email"  name="email" placeholder="Your Email" required>
-
-        <label for="lname">Password</label>
-        <input type="password"  name="password" placeholder="Your Password" required>
-
-
-        <input type="submit" value="SIGNUP" id="signupButton">
-      </form>
-    </div>
-  </div>
-  <p id="massage">[[ massage ]]</p>
-  <button>SIGNUP</button>
-  
-</div>
-
-
-
-<script>
-
-
-//trigger slide animation//
-let box = document.querySelector('#login');
-let button = document.querySelector('button');
-let flag=0
-button.addEventListener('click', function() {
-
-  if(button.innerHTML==='SIGNUP'){
-button.innerHTML="LOGIN"
-}
-else{
-    button.innerHTML="SIGNUP";
-}
-
-
-if(flag===0){
-  box.classList.toggle('move-left')
-  flag=1;
-  console.log('left')
-  return null}
-
-if(flag===1){
-box.classList.toggle('move-right');
-flag=1;
-console.log('right')
-  return null
-}
-
-});
-
-
-
-
-// submition of signup form
-let signupForm=document.getElementById('signupForm')
-
-signupForm.addEventListener("submit", function(event) {
-  event.preventDefault(); // Prevent form from submitting normally
-
-  // Get form data
-  var formData = new FormData(signupForm);
-
-  // Send form data to Flask route
-  fetch("/submit", {
-    method: "POST",
-    body: formData
-  })
-  .then(function(response) {
-    // Handle response from the Flask route
-    if (response.ok) {
-      console.log('Successful submmition')
-      // Do something with the response data
-    } else {
-      // Error occurred
-      // Handle the error
+  <style>
+    body {
+      background: url("https://w.wallhaven.cc/full/0w/wallhaven-0w2de6.jpg") no-repeat center center fixed;
+      -webkit-background-size: cover;
+      -moz-background-size: cover;
+      -o-background-size: cover;
+      background-size: cover;
     }
-  })
-  .catch(function(error) {
-    // Handle network or other errors
-  });
-});
 
 
-//trigers click on button to invoke animation//
-let signupButton = document.getElementById("signupButton")
+    #mainBox {
+      width: 313px;
+      /*background-color:  #f2f2f2;*/
+      background: rgba(40, 40, 40, 0.6);
+      backdrop-filter: saturate(200%) blur(7px);
+      box-shadow: 0 4px 18px 0 rgba(0, 0, 0, 0.5), 0 6px 20px 0 rgba(0, 0, 0, 0.9);
+      border-radius: 8px;
+      padding: 20px;
+      overflow: hidden;
+      position: relative;
+      top: 50px;
+      margin: auto;
+    }
 
 
-signupButton.addEventListener('click', function() { 
-  
-  fetch('/click').then(function(response) {
-                    return response.text();
-                })
-                .then(function(message) {
-                     if(message==='true'){
-                      if(signupForm.checkValidity() === true){button.click();}
-                     };  // Display the response message
-                })
-                .catch(function(error) {
-                    console.error('Error:', error);
-                });
+    #loginSignupBox {
+      width: 597px;
+      border-radius: 5px;
+      padding: 20px;
+      /*background-color:  red;*/
+      position: relative;
 
-})
+    }
 
-</script>
+
+    input[type=text],
+    input[type=password],
+    input[type=email] {
+      color: white;
+      width: 100%;
+      padding: 12px 20px;
+      margin: 10px 0px 20px 0px;
+      display: inline-block;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+      background: rgba(80, 80, 80, 0.6);
+    }
+
+    input[type=submit] {
+      width: 100%;
+      background-color: #ff033e;
+      color: white;
+      padding: 14px 20px;
+      margin: 28px 0;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    input[type=submit]:hover {
+      background-color: #d00030;
+    }
+
+    #login {
+      width: 270px;
+      display: inline-block;
+      margin-right: 50px;
+      /*background-color:  blue;*/
+      position: relative;
+      top: -106px;
+      margin-left: 0px
+    }
+
+    #login.move-left {
+      animation: move-l 0.5s forwards;
+    }
+
+    #login.move-right {
+      animation: move-r 0.5s forwards;
+    }
+
+
+
+    @keyframes move-l {
+      from {
+        margin-left: 0px
+      }
+
+      to {
+        margin-left: -322px
+      }
+    }
+
+
+    @keyframes move-r {
+      from {
+        margin-left: -322px
+      }
+
+      to {
+        margin-left: 0px
+      }
+    }
+
+    #signup {
+      width: 270px;
+      display: inline-block;
+      /*background-color:  yellow;*/
+
+    }
+
+    label {
+      color: white;
+      font-size: 30px;
+      font-family: Arial, Helvetica, sans-serif;
+      font-weight: bold;
+    }
+
+    button {
+      color: white;
+      width: 100px;
+      height: 30px;
+      border-radius: 5px;
+      background-color: #ff033e;
+      border: none;
+    }
+
+    button:hover {
+      background-color: #d00030;
+    }
+
+    #massage {
+      color: #ccc;
+      font-family: Arial, Helvetica, sans-serif;
+      position: relative;
+      top: -26px;
+      margin: 0;
+
+    }
+  </style>
+</head>
+
+<body>
+  <div id='mainBox'>
+    <div id='loginSignupBox'>
+      <div id=login>
+        <form method="POST">
+          <input type="hidden" name="form_type" value="login">
+          <input type="hidden" name="username" value="none">
+
+          <label for="lname">Email</label>
+          <input type="email" name="email" placeholder="Your Email" required>
+
+          <label for="lname">Password</label>
+          <input type="password" name="password" placeholder="Your Password" required>
+
+          <input type="submit" value="LOGIN">
+        </form>
+      </div>
+
+
+      <div id=signup>
+        <form method="POST" id="signupForm">
+          <input type="hidden" name="form_type" value="signup">
+
+          <label for="fname">User Name</label>
+          <input type="text" name="username" placeholder="Your Username" required>
+
+          <label for="lname">Email</label>
+          <input type="email" name="email" placeholder="Your Email" required>
+
+          <label for="lname">Password</label>
+          <input type="password" name="password" placeholder="Your Password" required>
+
+
+          <input type="submit" value="SIGNUP" id="signupButton">
+        </form>
+      </div>
+    </div>
+    <p id="massage">[[ massage ]]</p>
+    <button>SIGNUP</button>
+
+  </div>
+
+
+
+  <script>
+    //trigger slide animation//
+    let box = document.querySelector('#login');
+    let button = document.querySelector('button');
+    let flag = 0
+    button.addEventListener('click', function () {
+
+      if (button.innerHTML === 'SIGNUP') {
+        button.innerHTML = "LOGIN"
+      } else {
+        button.innerHTML = "SIGNUP";
+      }
+
+
+      if (flag === 0) {
+        box.classList.toggle('move-left')
+        flag = 1;
+        console.log('left')
+        return null
+      }
+
+      if (flag === 1) {
+        box.classList.toggle('move-right');
+        flag = 1;
+        console.log('right')
+        return null
+      }
+
+    });
+
+
+
+
+    // submition of signup form
+    let signupForm = document.getElementById('signupForm')
+
+    signupForm.addEventListener("submit", function (event) {
+      event.preventDefault(); // Prevent form from submitting normally
+
+      // Get form data
+      var formData = new FormData(signupForm);
+
+      // Send form data to Flask route
+      fetch("/submit", {
+          method: "POST",
+          body: formData
+        })
+        .then(function (response) {
+          // Handle response from the Flask route
+          if (response.ok) {
+            console.log('Successful submmition')
+            // Do something with the response data
+          } else {
+            // Error occurred
+            // Handle the error
+          }
+        })
+        .catch(function (error) {
+          // Handle network or other errors
+        });
+    });
+
+
+    //trigers click on button to invoke animation//
+    let signupButton = document.getElementById("signupButton")
+
+
+    signupButton.addEventListener('click', function () {
+
+      fetch('/click').then(function (response) {
+          return response.text();
+        })
+        .then(function (message) {
+          if (message === 'true') {
+            if (signupForm.checkValidity() === true) {
+              button.click();
+            }
+          }; // Display the response message
+        })
+        .catch(function (error) {
+          console.error('Error:', error);
+        });
+
+    })
+  </script>
 
 </body>
-</html>
 
+</html>

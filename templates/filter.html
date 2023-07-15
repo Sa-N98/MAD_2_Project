@@ -253,42 +253,47 @@
 <body>
     
     <div id="app" v-cloak >
-     <movies-list length= "[[ movies|length ]]" genre= "[[ g ]]" venue= "[[ v ]]" rating= "[[ r ]]" ></movies-list>
-     
+        <div v-if='movies.length > 0' >
+            <p id='heading'>Availabel Movies</p>
+            <div id='filter'>
+                <div class='tag first' v-if='genre != "none"'> <h3>{{genre }}</h3> </div>
+                <div class='tag' v-if='venue != "none"'> <h3>{{ venue }}</h3> </div>
+                <div class='tag' v-if='rating != "none"'> <h3>{{ rating }}</h3> </div>
+                <div id="library">
+                
+                <movie-cards  v-for='titles in movies' :title="titles"></movie-cards>
+                </div>
+            </div>
+        </div>
+        <div v-else> 
+            <img id="error-img" src="static\\Images\\404.png">
+            <h3  id="error-massage">Looks Like There Are No Movies For Your Choice</h3>
+            <a href="/welcome"><div>GO TO HOME</div></a>
+        </div>
     </div>
 
     <script>
-      const app = Vue.createApp({});
-      app.component('movies-list',{
-        template:`
-        <div >
-            <div v-if='length > 0' >
-                <p id='heading'>Availabel Movies</p>
-                <div id='filter'>
-                    <div class='tag first' v-if='genre != "none"'> <h3>[[ g ]]</h3> </div>
-                    <div class='tag' v-if='venue != "none"'> <h3>[[ v ]]</h3> </div>
-                    <div class='tag' v-if='rating != "none"'> <h3>[[ r ]]</h3> </div>
-                    <div id="library">
-                    {%for movie in movies %}
-                    <movie-cards title= "[[ movie.name ]]"></movie-cards>
-                    {%endfor%}
-                    </div>
-                </div>
-            </div>
-            <div v-else> 
-                <img id="error-img" src="static\\Images\\404.png">
-                <h3  id="error-massage">Looks Like There Are No Movies For Your Choice</h3>
-                <a href="/welcome"><div>GO TO HOME</div></a>
-            </div>
-        </div>
-        `,
-        props:['length' ,'genre', 'venue', 'rating'],
+      const app = Vue.createApp({
+        data(){
+            return{
+                venue:'',
+                rating:'',
+                genre:'',
+                movies:''
+            }
+        },
         mounted(){
-           console.log(this.venue)
+            let temp= [[ data|tojson ]]
+            this.venue=temp[0].venue
+            this.genre=temp[0].genre
+            this.rating=temp[0].rating
+            this.movies=temp[0].title
+            console.log(temp[0])
         }
-      })
-      app.component('movie-cards',{
-            template:`
+      });
+      
+      app.component('movie-cards', {
+            template: `
             <div class='card'>
 		    <div class=content>
                 <div class= card-poster>
@@ -300,60 +305,74 @@
                     <div class='summary'>
                         <p>{{ summary }}.</p>
                     </div>
-                <button  onclick="location.href='http://www.youtube.com'" type="button">Booke A Ticket </button>
+                <button  @click="openLink" type="button">Booke A Ticket </button>
                 </div>
 	        </div>
             </div>
             `,
-            
-            props:['title'],
+
+            props: ['title'],
             data() {
-                return{ 
-                    cards:null,
-                    poster:'',
-                    rating:'',
-                    summary:'',
+                return {
+                    cards: null,
+                    poster: '',
+                    rating: '',
+                    summary: '',
+                    show_id: '/booking/'
                 }
             },
 
             mounted() {
-                url='/api/movie/'+this.title
+                url = '/api/movie/' + this.title
                 axios.get(url)
                     .then(response => {
-                        this.rating=response.data.rating
-                        this.poster=response.data.poster
+                        this.rating = response.data.rating
+                        this.poster = response.data.poster
+                        let id = response.data.id
+                        this.show_id = this.show_id + id
                     })
                     .catch(error => {
                         console.error(error);
                     });
 
-                url='http://www.omdbapi.com/?t='+this.title+'&apikey=78f7079e';
+                url = 'http://www.omdbapi.com/?t=' + this.title + '&apikey=78f7079e';
                 axios.get(url)
                     .then(response => {
-                        this.summary=response.data.Plot
+                        this.summary = response.data.Plot
                     }).catch(error => {
                         console.error(error);
-                    });
+                    }); 
             },
-        })
 
+            methods: {
+                openLink() {
+                    // window.open(this.show_id);//
+                    window.location.href = this.show_id
+                }
+            }
+        })
       app.mount('#app');
 
-      const cards = document.getElementsByClassName('card');
-        for (let i = 0; i < cards.length; i++) {
-        const card = cards[i];
-        card.addEventListener('click', function() {
-            // Remove the 'expand' class from all cards
-            for (let j = 0; j < cards.length; j++) {
-            if (cards[j] !== card) {
-                cards[j].classList.remove('expand');
-            }
-            }
+      setTimeout(() => {
+        const cards = document.getElementsByClassName('card');
+                    for (let i = 0; i < cards.length; i++) {
+                        const card = cards[i];
+                        card.addEventListener('click', function () {
+                            // Remove the 'expand' class from all cards
+                            for (let j = 0; j < cards.length; j++) {
+                                if (cards[j] !== card) {
+                                    cards[j].classList.remove('expand');
+                                }
+                            }
 
-            // Toggle the 'expand' class on the clicked card
-            card.classList.toggle('expand');
-        });
-        }
+                            // Toggle the 'expand' class on the clicked card
+                            card.classList.toggle('expand');
+                        });
+                    }
+  }, 500);
+      
+      
+      
     </script>
 </body>
 </html>
