@@ -433,13 +433,13 @@
             <div  class=ticket>
                 <div class='venue'>
                     <div class='name'>   
-                        <h3>{{ venue[0] }}</h3> 
-                        <div class='date'>{{ venue[2] }} <h4 id='price'>Rs {{ venue[4] }}</h4></div>
-                        <h4>{{ venue[1] }}</h4>
+                        <h3>{{ venue[0][1] }}</h3> 
+                        <div class='date'>{{ venue[1][1] }} <h4 id='price'>Rs {{ venue[3] }}</h4></div>
+                        <h4>{{ venue[0][2] }}</h4>
                         
                     </div>
                     <div id='mask' class="noBooking" ><h1>NO BOOKING</h1></div>
-                    <div class='seats'><h1 id='maxSeatNo'>{{venue[3]}}</h1> <h2>SEATS</h2> </div>
+                    <div class='seats'><h1 id='maxSeatNo'>{{venue[2]}}</h1> <h2>SEATS</h2> </div>
                 </div>
                 <div class='tkt-counter'>
                     <div id="count" >0</div>
@@ -451,13 +451,14 @@
                 </div>
             </div>
             `,
-            props: ['venue', ],
+            props: ['venue'],
             data() {
                 return {
                     availabelSeats: "",
                 }
             },
             mounted() {
+                console.log(this.venue[4])
                 let fontHeightCheck = () => {
                     let placeElements = document.querySelectorAll('.name h4')
                     placeElements.forEach(h1 => {
@@ -465,6 +466,7 @@
                             h1.style.fontSize = '12.5px'
                         }
                     });
+                    
                 }
 
                 setInterval(fontHeightCheck, 100)
@@ -495,6 +497,7 @@
 
                 // setInterval(()=>{console.log(this.availabelSeats)},1000)
                 setInterval(this.showNoBooking.bind(this), 100)
+
             },
 
             methods: {

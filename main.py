@@ -198,11 +198,11 @@ def filter():
 
 
 @app.route("/booking/<i>", methods=["GET", "POST"])
+@login_required
 def booking_page(i):
     return render_template('booking.html')
-
-
 @app.route("/api/show-booking-data/<i>", methods=["GET", "POST"])
+@login_required
 def show_booking_data(i):
     movie = show.query.filter(show.id == i).first()
     infos = Show_Venue.query.filter(Show_Venue.s_id == i).all()
@@ -211,8 +211,12 @@ def show_booking_data(i):
         for date in movie.dates:
             for info in infos:
                 if venue.id == info.v_id and date.id == info.d_id:
-                    venues.append([venue.name, venue.place,
-                                  date.dates, info.seats, info.price])
+                    venues.append([[venue.id,venue.name, venue.place],
+                                  [date.id, date.dates], 
+                                  info.seats, 
+                                  info.price, 
+                                  movie.id]
+                                 )
     shows = {
         'name': movie.name,
         'poster': movie.poster,
