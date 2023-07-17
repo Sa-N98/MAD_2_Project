@@ -1,7 +1,9 @@
 import os
 from sqlalchemy import and_
 from application.model import *
+from application.api import*
 from flask_security.utils import hash_password, verify_password
+from flask_restful import Api
 from flask import Flask, render_template, request, redirect, url_for, jsonify
 from flask_security import Security, SQLAlchemyUserDatastore, login_required, logout_user, login_user
 
@@ -21,6 +23,9 @@ app.jinja_options['variable_end_string'] = ' ]]'
 db.init_app(app)
 app.app_context().push()
 
+api = Api(app)
+api.add_resource(show_booking, '/api/show_booking')
+api.add_resource(show_cancel, '/api/show_cancel','/api/show_cancel/<bookind_id>')
 
 user_datastore = SQLAlchemyUserDatastore(db, User, Role)
 security = Security(app, user_datastore)
@@ -200,7 +205,10 @@ def filter():
 @app.route("/booking/<i>", methods=["GET", "POST"])
 @login_required
 def booking_page(i):
-    return render_template('booking.html')
+    if request.method == "GET":
+        return render_template('booking.html')
+    if request.method == "POST":
+        return 'hi'
 @app.route("/api/show-booking-data/<i>", methods=["GET", "POST"])
 @login_required
 def show_booking_data(i):
@@ -224,6 +232,31 @@ def show_booking_data(i):
         'venues': venues
     }
     return jsonify(shows)
+
+@app.route('/user_bookings/<current_user>', methods=["GET", "POST"])
+@login_required
+def user_bookings(current_user):
+    infos=booked_shows.query.filter(booked_shows.user_name == current_user).all()
+    shows_booked_by_users=list()
+    for info in infos:
+        # print(show.query.filter(show.id == info.movieID).first().name)
+
+       movie_name=show.query.filter(show.id == info.movieID).first().name
+       movie_poster=show.query.filter(show.id == info.movieID).first().poster
+       venue_name=venue.query.filter(venue.id == info.venueID).first().name
+       venue_place=venue.query.filter(venue.id == info.venueID).first().place
+       movie_dates=date.query.filter(date.id == info.dateID).first().dates
+       tickets=info.NO_tickets 
+       ids=[
+           info.id,
+           show.query.filter(show.id == info.movieID).first().id,
+           venue.query.filter(venue.id == info.venueID).first().id,
+           date.query.filter(date.id == info.dateID).first().id
+       ]
+       shows_booked_by_users.append([movie_name,movie_poster,venue_name,venue_place,movie_dates,tickets,ids])
+
+    return render_template('user_booking.html', data=shows_booked_by_users)
+
 
 # use this rout in link in template to log out
 

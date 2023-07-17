@@ -48,7 +48,7 @@
             color: #ebebeb;
             position: absolute;
             z-index: 10;
-            top: 395px;
+            top: 375px;
             left: 20px;
             font-size: 170px;
             opacity: 1;
@@ -467,7 +467,7 @@
         <ul>
             <li><a class="active" href="#home"><i class="fa fa-home"
                         style="font-size:24px;color:rgb(236, 236, 236)"></i></a></li>
-            <li><a href="#news">My Bookings</a></li>
+            <li><a href="/user_bookings/[[ current_user.username ]]">My Bookings</a></li>
             <li><a href="#about">About</a></li>
             <li style="float:right"><a href="[[ url_for('logout') ]]">Logout</a></li>
         </ul>

@@ -78,3 +78,18 @@ class genre(db.Model):
     id = db.Column(db.Integer, autoincrement=True,
                    primary_key=True, unique=True)
     type = db.Column(db.String, unique=True, nullable=False)
+
+class booked_shows(db.Model):
+    __tablename__ = 'booked_shows'
+    id = db.Column(db.Integer, autoincrement=True,
+                   primary_key=True, unique=True)
+    user_name =db.Column(db.String)
+    movieID = db.Column(db.Integer)
+    venueID = db.Column(db.Integer)
+    dateID = db.Column(db.Integer)
+    NO_tickets = db.Column(db.Integer)
+    
+
+
+
+    

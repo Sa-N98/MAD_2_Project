@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Page Title</title>
+<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<style>
+* {
+    padding: 0;
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    color: aliceblue
+  }
+
+body {
+    background-color: #090C1A;
+    overflow-x: hidden;
+  }
+  
+.list{
+margin-bottom: 50px;
+display: flex;
+flex-wrap: wrap;
+position: relative;
+width: 68vw;
+/* background-color: bisque; */
+left: -50%;
+translate: 96% 121px;
+}
+
+
+
+.shows{
+width:150px;
+height:230px;
+background-color: white;
+margin:10px;
+border-radius:7px;
+overflow:hidden;
+transition: height 0.15s ease;
+/*background-color:red;*/
+}
+.shows:hover{
+height:270px;
+box-shadow: 14px 15px 15px -3px rgba(0, 0, 0, 0.75);
+
+}
+.shows img{
+height:100%;
+max-height:230px;
+filter: brightness(100%);
+position:relative;
+left:50%;
+translate:-50% 0%;
+
+}
+.shows h1, h4, h2{
+/*background-color: red;*/
+text-align:center;
+position:relative;
+left:50%;
+translate:-50% 0%;
+}
+.date{
+width:70px;
+border-radius:5px;
+border-style:solid;
+border-width:2px;
+border-color:white;
+padding:2px;
+translate:-90% -300%;
+background-color:rgba(11,11,11,0.3);
+}
+
+.seats{
+background: rgb(4,4,4);
+background: linear-gradient(0deg, rgba(4,4,4,0.9920343137254902) 2%, rgba(35,35,38,0.7091211484593838) 45%, rgba(11,11,11,0) 100%);
+height:100px;
+translate:0% 22%
+}
+
+.seats h1{
+font-size:60px;
+
+}
+
+.info{
+position:relative;
+translate:0% -120%
+}
+.shows h2{
+position:relative;
+translate:-50% -287%;
+background-color:#ff033e;
+height:40px;
+padding-top:5px;
+}  
+
+.shows h2:hover{
+background-color:#d00030;
+}  
+
+a:link {
+  text-decoration: none;
+}
+
+a:visited {
+  text-decoration: none;
+}
+
+.showInfo{
+position:absolute;
+background-color:rgba(11,11,11,0.7021);
+width:150px;
+height:230px;
+translate:0 -102%;
+border-radius:7px;
+opacity:0;
+transition: opacity 0.1s ease;
+}
+.showInfo:hover{
+opacity:1
+}
+.showInfo h5, p{
+display:inline-block;
+position: relative;
+left:3%;
+top:20%
+}
+
+.showInfo p{
+font-size: 12px;
+}
+
+.showInfo .place{
+/*background-color:green;*/
+width:108px;
+position: relative;
+left:34%;
+top:13%;
+}
+.showInfo .title{
+position: relative;
+left:6.5%;
+top:21.5%;
+overflow-x:hidden;
+
+}
+
+#nothing-img{
+width: 24vw;
+min-width: 300px;
+position: relative;
+left: 50%;
+translate: -50% 30%;
+}
+
+#nothing-massage{
+color:aliceblue;
+position: relative;
+left: 50%; 
+text-align: center;
+font-family: Arial, Helvetica, sans-serif;
+}
+
+#nothing-massage{
+width:449px;
+transform: translate(-50%, 32%);
+letter-spacing: 5px;
+line-height: 1.6;
+margin-top: 66px;
+}
+
+#go_home{
+display: inline-block;
+position: relative;
+left: 50%;
+transform: translate(-50%, 92%);
+width: 178px;
+background-color: #ff033e;
+height: 43px;
+box-sizing: border-box;
+border-radius: 43px;
+padding-top: 13px;
+font-weight: 600;
+text-align: center;
+}
+
+#go_home:hover {
+background-color: #ff0000;
+}
+
+#welcome-massage{
+position: relative;
+transform: translate(1%, 115%);
+font-size: 4vw;
+}
+
+
+ul {
+list-style-type: none;
+margin: 0;
+padding: 0;
+overflow: hidden;
+background-color: #090C1A;
+box-shadow: 0 1px 10px 0 rgba(0, 0, 0, 0.5);
+height: 50px;
+position: absolute;
+/* Add this */
+top: 0;
+/* Add this */
+left: 0;
+/* Add this */
+right: 0;
+/* Add this */
+z-index: 10;
+}
+
+li {
+float: left;
+}
+
+li a {
+display: block;
+color: white;
+text-align: center;
+padding: 14px 16px;
+text-decoration: none;
+height: 50px;
+}
+
+li a:hover:not(.active) {
+background-color: #d00030;
+}
+
+.active {
+background-color: #ff033e;
+}
+
+</style>
+</head>
+<body>
+<!-- Nav Bar -->
+<ul>
+  <li><a  href="/welcome"><i class="fa fa-home"
+              style="font-size:24px;color:rgb(236, 236, 236)"></i></a></li>
+  <li><a class="active" href="/user_bookings/[[ current_user.username ]]">My Bookings</a></li>
+  <li><a href="#about">About</a></li>
+  <li style="float:right"><a href="[[ url_for('logout') ]]">Logout</a></li>
+</ul>
+
+<div  id="app">
+  <h1 id="welcome-massage">[[ current_user.username ]]'s Booking</h1>
+  <div v-if='bookings.length>0' class='list' >
+      <booked-shows v-for="tickets in bookings" :data="tickets" ></booked-shows>
+  </div>
+  <div v-else >
+    <img id="nothing-img" src="\static\Images\ticket.png">
+    <h3  id="nothing-massage">Looks Like You Have No Movies Booked</h3>
+    <a href="/welcome"><div id="go_home">GO TO HOME</div></a>
+  </div>
+</div>
+  
+<script>
+    const app = Vue.createApp({
+      data(){
+            return{
+                bookings:''
+            }
+        },
+        mounted(){
+            this.bookings= [[ data|tojson ]]
+            console.log( this.bookings)
+        }
+    })
+    app.component('booked-shows',{
+        template: `
+        <div class='shows' v-if="display">
+            <img :src='data[1]'>
+            <div class='showInfo'>
+            <h5>Movie: </h5><p class='title'> {{ data[0] }}</p><br>
+            <h5>Venue:</h5><p class='place'>{{data[2]}} {{data[3]}}</p>
+            </div>
+            <div class='info'>
+            <h4 class='date'>{{data[4]}}</h4>
+            <div class='seats'><h1>{{data[5]}}</h1><h4>SEATS</h4></div>
+            </div>
+            <h2 @click='cancel_show'>CANCEL</h2>
+        </div>
+        `,
+        props:['data'],
+        data(){
+          return{
+            display:true
+          }
+        },
+        methods: {
+          cancel_show: function(){
+            console.log(this.data[5])
+            console.log(this.data[6])
+            const body = {
+                            'bookingID': this.data[6][0],
+                            'movieID': this.data[6][1],
+                            'venueID':this.data[6][2],
+                            'dateID': this.data[6][3],
+                            'NO_tickets':this.data[5]
+                        }
+            axios.put('/api/show_cancel', body)
+                .then(response => {
+                    console.log('Put created:', response.data);
+                })
+                .catch(error => {
+                    console.error('Error creating post:', error);
+                });
+            
+            const delete_url = '/api/show_cancel/' + this.data[6][0];
+
+            fetch(delete_url, {
+              method: 'DELETE',
+            })
+              .then(response => {
+                if (response.ok) {
+                  console.log('Deletion successful');
+                } else {
+                  throw new Error('Deletion failed');
+                }
+              })
+              .catch(error => {
+                console.error('Error deleting:', error);
+              });
+
+            this.display=false;
+            
+          }
+        }
+    })
+    app.mount('#app')
+
+</script>
+
+
+
+
+</body>
+</html>
