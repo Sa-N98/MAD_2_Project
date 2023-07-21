@@ -45,7 +45,7 @@ def index():
         if form_type == 'login':
             user = User.query.filter_by(
                 email=request.form.get('email')).first()
-            if user and verify_password(password, user.password):
+            if user and user.role=='user' and verify_password(password, user.password):
                 login_user(user)
                 return redirect(url_for('welcome'))
             else:
@@ -65,6 +65,7 @@ the form is submitted using js.
 def submit():
     user_datastore.create_user(username=request.form.get('username'),
                                email=request.form.get('email'),
+                               role=request.form.get('user_type'),
                                password=hash_password(request.form.get('password')))
     db.session.commit()
     return "submition"
@@ -256,6 +257,79 @@ def user_bookings(current_user):
        shows_booked_by_users.append([movie_name,movie_poster,venue_name,venue_place,movie_dates,tickets,ids])
 
     return render_template('user_booking.html', data=shows_booked_by_users)
+
+############ admin ############
+
+@app.route("/admin", methods=['POST', 'GET'])
+def admin():
+    if request.method == "POST":
+        form_type = request.form['form_type']
+        password = request.form['password']
+
+        if form_type == 'login':
+            user = User.query.filter_by(
+                email=request.form.get('email')).first()
+            if user and user.role=='admin' and verify_password(password, user.password):
+                login_user(user)
+                return redirect(url_for('dashbord'))
+            else:
+                massage = "User Not Found. Please Signup"
+                return render_template('admin.html', massage=massage)
+
+    return render_template('admin.html')
+
+@app.route("/dashbord", methods=['POST', 'GET'])
+def dashbord():
+    infos = Show_Venue.query.all()
+    total_seats=0
+    for info in infos:
+        total_seats=total_seats + info.starting_seats
+
+    temp=dict()
+    for info in infos:
+        if info.s_id not in temp.keys():
+            temp[info.s_id]=0
+        if  info.s_id in temp.keys():
+            temp[info.s_id]=temp[info.s_id]+(info.starting_seats-info.seats)
+    venue_temp=dict()
+    for info in infos:
+        if info.v_id not in venue_temp.keys():
+            venue_temp[info.v_id]=0
+        if  info.v_id in temp.keys():
+            venue_temp[info.v_id]=venue_temp[info.v_id]+(info.starting_seats-info.seats)
+    max_key = max(venue_temp, key=venue_temp.get)
+    top_venue=[venue.query.filter(venue.id==max_key).first().name,venue.query.filter(venue.id==max_key).first().place]
+    max_bookings=venue_temp[max_key]
+
+    movie_name=list()
+    tickets=list()
+    for key in temp.keys():
+        movie_name.append(show.query.filter(show.id == key).first().name)
+        tickets.append(temp[key])
+
+    booking_info = booked_shows.query.all()
+    tickets_sold=0
+    for info in booking_info:
+        tickets_sold=tickets_sold + info.NO_tickets
+    
+    poster=show.query.filter(show.name == movie_name[tickets.index(max(tickets))]).first().poster
+    print(poster)
+   
+    users=len(User.query.filter(User.role=='user').all())
+
+    data={
+        "movie_name":movie_name,
+        "tickets":tickets,
+        "pidata": [total_seats, tickets_sold],
+        "poster":poster,
+        'top_venue':top_venue,
+        'max_bookings':max_bookings,
+        'users':users
+
+    }
+
+    return render_template('dashbord.html',data=data)
+
 
 
 # use this rout in link in template to log out

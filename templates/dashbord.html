@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
+    <script src='https://cdn.plot.ly/plotly-2.24.1.min.js'></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <title>Admin Dashbord</title>
+</head>
+<style>
+    body{
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: #090C1A ;
+    overflow: hidden;
+    }
+    #pichart {
+        overflow: hidden;
+        position: relative;
+        float: right;
+      background-color: #F0E5FC;
+      padding-top:0px;
+      padding-bottom:20px;
+      width: 384px;
+      height: 256px;
+      box-sizing: border-box;
+      border-radius:7px;
+    }
+    #myChart{
+        position: relative;
+        top: -23px;
+    }
+    #pichart h4 {
+        position: relative;
+        top: -13px;
+        left:12px;
+        letter-spacing: 1px;
+        font-weight: 900;
+        color:#962DFF
+        }
+    .legend{
+        position:absolute;
+        translate: 1370% -141%;
+        width: 20px;
+        height: 20px;
+        border-radius: 5px;
+        font-size: 10px;
+    }
+    #sold{
+        background-color: #C893FD;
+        top: 94px;
+    }
+    #sold h3, #unsold h3{
+        position:absolute;
+        top: 0px;
+        left:24px;
+        width: 300px;
+        font-size: 9px;
+    }
+    #unsold{
+        background-color: #962DFF;
+    }
+    .pi-stat-1{
+        position:absolute;
+        top: 94px;
+        left: 254px;
+    }
+    .pi-stat-1 h1,.pi-stat-1 h5{
+        margin: 0;
+    }
+    .pi-stat-1 h1{
+      font-size: 48px;
+      font-weight: 900;
+      text-align: center;
+    }
+    .pi-stat-1 h5{
+      position: relative;
+      top:-12px;
+      font-size: 8px;
+      font-weight: 900;
+    }
+    .pi-stat-2{
+        position:absolute;
+        top: 157px;
+        left: 265px;
+    }
+    .pi-stat-2 h1,.pi-stat-2 h5{
+        margin: 0;
+    }
+    .pi-stat-2 h1{
+      font-size: 48px;
+      font-weight: 900;
+      text-align: center;
+    }
+    .pi-stat-2 h5{
+      position: relative;
+      top:-12px;
+      font-size: 8px;
+      font-weight: 900;
+    }
+    .pi-stat-1 h1,
+    .pi-stat-1 h5,
+    .pi-stat-2 h1,
+    .pi-stat-2 h5{
+        color:#240B3D
+    }
+    #bargraph-container{
+    border-radius: 5px;
+    background-color:#F0E5FC;
+    padding: 13px;
+    padding-top: 30px;
+    width:100vw;
+    max-width: 1095px;
+  }
+   #bargraph-container h4{
+    position: relative;
+    top: -23px;
+    left: 4px;
+    margin: 0;
+    letter-spacing: 1px;
+    font-weight: 900;
+    color: #962DFF;
+  }
+   #top-movie{
+    position: relative;
+    float: right;
+    width: 384px;
+    height: 150px;
+    top: -149px;
+    border-radius: 7px;
+    background-color: #F0E5FC;
+   }
+   #top-movie #poster{
+        position: relative;
+        top: 6px;
+        left: 9px;
+        width: 94px;
+        height: 139px;
+        overflow: hidden;
+        border-radius: 5px;
+        background-color: aqua;
+   }
+   #poster img{
+    position: relative;
+    left: 50%;
+    translate: -50%;
+    height: 100%;
+   }
+   #top-movie h4{
+    position: relative;
+    top: -159px;
+    left: 172px;
+    letter-spacing: 1px;
+    font-weight: 900;
+    color: #962DFF;
+   }
+   #top-movie h1,
+   #top-movie h3,
+   #top-movie p{
+    position: relative;
+    top: -180px;
+    left: 60px;
+    margin: 0;
+    text-align: center;
+    color: #240B3D;
+   }
+   #top-movie h3{
+    font-weight: 900;
+    font-size: 13px;
+    letter-spacing: 1px;
+    top:-210px
+   }
+   #top-movie h1{
+    font-weight: 900;
+    font-size: 56px;
+    letter-spacing: 1px;
+    top: -195px;
+   }
+   #top-movie p{
+    font-weight: 900;
+    letter-spacing: 1px;
+    font-size: 30px;
+    margin-bottom: 2px;
+   }
+   #top-venue{
+    background-color: #F0E5FC;
+    width: 73vw;
+    height: 90px;
+    border-radius: 7px;
+    position: relative;
+    top: -9px;
+   }
+   #top-venue h4{
+       position: relative;
+        top: 3px;
+        left:12px;
+        letter-spacing: 1px;
+        font-weight: 900;
+        color:#962DFF
+   }
+   #top-venue h1,
+   #top-venue h3{
+    color: #240B3D;
+    margin: 0;
+    position: relative;
+    top: -15px;
+    left: 15px;
+   }
+   #top-venue #bookings{
+    position: relative;
+    float: right;
+    top: -100px;
+    right: 20px;
+    color: #090C1A;
+   }
+   #top-venue #bookings h3,
+   #top-venue #bookings h5{
+    margin:0;
+   }
+   #top-venue #bookings h3{
+    position: relative;
+    top: 2px;
+    font-weight: 900;
+    font-size: 43px;
+   }
+   #subscriber{
+    background-color: #F0E5FC;
+    width: 384px;
+    height: 90px;
+    position: relative;
+    float: right;
+    left: 31.1%;
+    top: -110px;
+    border-radius: 7px;
+   }
+   #subscriber h4{
+       position: relative;
+        top: 3px;
+        left:12px;
+        letter-spacing: 1px;
+        font-weight: 900;
+        margin: 0;
+        color:#962DFF
+   }
+   #subscriber h1{
+    margin: 0;
+    text-align: center;
+    position: relative;
+    top: -14px;
+    font-weight: 900;
+    font-size: 58px;
+    color: #240B3D;
+   }
+</style>
+<body>
+    <div id="app">
+        <div id='pichart'>
+        <h4>TICKET BOOKING STAT</h4>
+        <div class="legend" id="unsold"><h3>TICKET SOLD</h3></div>
+        <div class="legend" id="sold"><h3>TICKET UNSOLD</h3></div>
+        <canvas id="myChart" style="width: 100%; max-width: 600px;"></canvas>
+        <div class="pi-stat-1">
+            <h1>{{ TOTAL_TICKETS }}</h1>
+            <h5>TOTAL TICKETS AT START</h5>
+        </div>
+
+        <div class="pi-stat-2">
+            <h1>{{ TICKETS_SOLD }}</h1>
+            <h5>TOTAL TICKETS SOLD</h5>
+        </div>
+        </div>
+        <div id="bargraph-container">
+        <h4>TICKET BOOKING STAT</h4>
+        <div id='barchart' style="width: 72vw; max-width:1100px;height: 350px;"></div>
+        </div>
+        <div id="top-movie">
+            <div id="poster"><img :src="top_poster"></div>
+            <h4>TOP SELLING MOVIE</h4>
+            <p>{{top_movie_name}}</p>
+            <h1>{{top_movie_name_tickets_booked}}</h1>
+            <h3>TICKETS BOOKED</h3>
+        </div>
+        <div id="top-venue">
+            <h4>MOST BOOKED VENUE</h4>
+            <h1>{{ top_venue }}</h1>
+            <h3>{{top_venue_place}}</h3>
+            <div id='bookings'>
+               <h3>{{top_venue_booking}}</h3>
+               <h5>BOOKINGS</h5>
+            </div>
+        </div>
+        <div id="subscriber">
+            <h4>TOTAL USERS</h4>
+            <h1 id="count">{{users}}</h1>
+        </div>
+    </div>
+    <script>
+    const app = Vue.createApp({
+        data(){
+            return{
+                x:null,
+                y:null,
+                xValues:["TICKET SOLD", "TICKET UNSOLD"],
+                yValues:null,
+                TOTAL_TICKETS:null,
+                TICKETS_SOLD:null,
+                barColors:["#962DFF","#C893FD",],
+                top_poster:null,
+                top_movie_name:null,
+                top_movie_name_tickets_booked:null,
+                top_venue:null,
+                top_venue_place:null,
+                top_venue_booking:null,
+                users:null
+            }
+        },
+        mounted(){
+            let temp= [[ data|tojson ]]
+            this.top_poster=temp.poster
+            this.top_venue=temp.top_venue[0]
+            this.top_venue_place=temp.top_venue[1]
+            this.top_venue_booking=temp.max_bookings
+            this.yValues= [temp.pidata[1],temp.pidata[0]-temp.pidata[1]]
+            this.TOTAL_TICKETS=temp.pidata[0]
+            this.TICKETS_SOLD=temp.pidata[1]
+            this.users=temp.users
+            new Chart("myChart", {
+                type: "pie",
+                data: {
+                labels: this.xValues,
+                datasets: [{
+                    backgroundColor: this.barColors,
+                    borderColor: '#F0E5FC', 
+                    data: this.yValues
+                }]
+                },
+                options: {
+                title: {
+                    display: false // Remove the title
+                },
+                legend: {
+                    display: false // Remove the legends
+                },
+                layout: {
+                    padding: {
+                    left: -160 // Position the chart to the left
+                    }
+                }
+                }
+            });
+            
+            const max = temp.tickets.reduce((a,b) => Math.max(a,b));
+            this.top_movie_name_tickets_booked=max
+            const index = temp.tickets.findIndex(element => element === max)
+            this.top_movie_name=temp.movie_name[index]
+            this.x=temp.movie_name
+            this.y=temp.tickets
+            var data = [
+                        {
+                            x: this.x,
+                            y: this.y,
+                            type: 'bar',
+                            marker: {
+                            color: '#962DFF',
+                            }
+                        }
+                        ];
+            var layout = {
+                            paper_bgcolor: '#f8f8f8',
+                            plot_bgcolor: '#f8f8f8',
+                            xaxis: {showticklabels: false},
+                            margin: {
+                                l: 50, // left margin
+                                r: 10, // right margin
+                                t: 20, // top margin
+                                b: 10 // bottom margin
+                            }
+                        }
+
+            Plotly.newPlot('barchart', data,layout);
+            
+        }
+    })
+    app.mount('#app');
+    </script>
+</body>
+</html>

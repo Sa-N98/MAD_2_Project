@@ -17,6 +17,7 @@ class User(db.Model,UserMixin):
     password=db.Column(db.String)
     active=db.Column(db.Boolean)
     fs_uniquifier = db.Column(db.String)
+    role=db.Column(db.String)
     roles = db.relationship('Role', secondary=roles_users, backref=db.backref('users',lazy='dynamic'))
 
 class Role(db.Model,RoleMixin):
@@ -55,6 +56,7 @@ class Show_Venue(db.Model):
     d_id = db.Column(db.Integer, db.ForeignKey("date.id"),
                      primary_key=True, nullable=False)
     seats = db.Column(db.Integer, nullable=False)
+    starting_seats= db.Column(db.Integer, nullable=False)
     price = db.Column(db.Integer, nullable=False)
 
 
