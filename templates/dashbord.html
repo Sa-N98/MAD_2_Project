@@ -13,7 +13,27 @@
     body{
     font-family: Arial, Helvetica, sans-serif;
     background-color: #090C1A ;
-    overflow: hidden;
+    overflow-x: hidden;
+    }
+    /* width */
+    ::-webkit-scrollbar {
+            width: 7px;
+     }
+
+    /* Track */
+    ::-webkit-scrollbar-track {
+        border-radius: 10px;
+    }
+
+    /* Handle */
+    ::-webkit-scrollbar-thumb {
+        background: #888;
+        border-radius: 10px;
+    }
+
+    /* Handle on hover */
+    ::-webkit-scrollbar-thumb:hover {
+        background: #555;
     }
     #pichart {
         overflow: hidden;
@@ -230,8 +250,8 @@
     height: 90px;
     position: relative;
     float: right;
-    left: 31.1%;
-    top: -110px;
+    left: 30.8%;
+    top: -111px;
     border-radius: 7px;
    }
    #subscriber h4{
@@ -252,6 +272,102 @@
     font-size: 58px;
     color: #240B3D;
    }
+   #tables{
+    display: flex;
+    width: 95%;
+    position: relative;
+    left: 50%;
+    translate: -50% -120%;
+   }
+   #toggle-button{
+    display:flex;
+    translate: 0px 11px;
+    }
+    #theater-buttton, #show-buttton{
+    background-color:white;
+    width:110px;
+    max-height: 10px;
+    padding:9px 0px 16px 0px;
+    text-align:center;
+    font-family:Arial, Helvetica, sans-serif;
+    letter-spacing: 1px;
+    border-top-style: solid;
+    border-bottom-style: solid;
+    border-color: #AEBDC2;
+    cursor: pointer;
+
+    }
+    #theater-buttton{
+    border-radius:99px 0px 0px 99px;
+    border-left-style: solid;
+    }
+    #show-buttton{
+    border-radius:0px 99px 99px 0px;
+    border-right-style: solid;
+    background-color:#962DFF;
+    color:white;
+    }
+  #tables h1{
+    margin: 0;
+    box-sizing: border-box;
+    padding-left: 20px;
+    width: 83%;
+    font-size: 50px;
+    color: whitesmoke;
+  }
+
+  #show-table {
+    font-family: Arial, Helvetica, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+    }
+
+    #show-table td, #show-table th {
+    border: 1px solid #ddd;
+    padding: 8px;
+    }
+
+    #show-table tr:nth-child(even){background-color: #f2f2f2;}
+
+    #show-table tr:hover {background-color: #ddd;}
+
+    #show-table th {
+        padding-top: 12px;
+        padding-bottom: 12px;
+        text-align: left;
+        background-color: #962DFF;
+        color: white;
+        }
+
+    #theater-table {
+        font-family: Arial, Helvetica, sans-serif;
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+    #theater-table td, #theater-table th {
+        border: 1px solid #ddd;
+        padding: 8px;
+    }
+
+    #theater-table tr:nth-child(even){background-color: #f2f2f2;}
+
+    #theater-table tr:hover {background-color: #ddd;}
+
+    #theater-table th {
+        padding-top: 12px;
+        padding-bottom: 12px;
+        text-align: left;
+        background-color: #962DFF;
+        color: white;
+    }
+    #theater-table, #show-table{
+        position: relative;
+        left: 50%;
+        width: 95%;
+        translate: -50% -51px;
+    }
+
 </style>
 <body>
     <div id="app">
@@ -294,6 +410,45 @@
             <h4>TOTAL USERS</h4>
             <h1 id="count">{{users}}</h1>
         </div>
+        <div id="tables">
+            <h1 v-if="theater">Theater Data</h1>
+            <h1 v-if="show">Show Data</h1>
+            <div id='toggle-button'>
+                <div id='theater-buttton' @click="selectTheater">Theaters</div><div id='show-buttton' @click="selectShow">Shows</div>
+            </div>
+        </div>
+        <table id="show-table" v-if="show">
+            <tr>
+              <th style="width:18%">Name</th>
+              <th style="width:38%">Location</th>
+              <th style="width:8%">Seats</th>
+              <th style="width:8%">price</th>
+              <th style="width:7%"></th>
+            </tr>
+            <tr>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+        </table>
+
+        <table id="theater-table" v-if="theater">
+            <tr>
+              <th style="width:4%">Id</th>
+              <th style="width:18%">Theater</th>
+              <th style="width:48%">Location</th>
+              <th style="width:7%"></th>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td>Maria Anders</td>
+              <td>Germany</td>
+              <td></td>
+            </tr>
+            
+          </table>
     </div>
     <script>
     const app = Vue.createApp({
@@ -312,7 +467,9 @@
                 top_venue:null,
                 top_venue_place:null,
                 top_venue_booking:null,
-                users:null
+                users:null,
+                theater:false,
+                show:true,
             }
         },
         mounted(){
@@ -377,9 +534,35 @@
                                 b: 10 // bottom margin
                             }
                         }
-
             Plotly.newPlot('barchart', data,layout);
+
+            let theaterButtton= document.getElementById('theater-buttton')
+            let showButtton=document.getElementById('show-buttton')
+
+            theaterButtton.addEventListener("click",function(){
+                                            theaterButtton.style.backgroundColor='#962DFF'
+                                            theaterButtton.style.color='white'
+                                            showButtton.style.backgroundColor='white'
+                                            showButtton.style.color='black'
+                                            });
+
+            showButtton.addEventListener("click",function(){
+                                        showButtton.style.backgroundColor='#962DFF'
+                                        showButtton.style.color='white'
+                                        theaterButtton.style.backgroundColor='white'
+                                        theaterButtton.style.color='black'
+                                        });
             
+        },
+        methods:{
+            selectShow() {
+                this.theater = false;
+                this.show = true;
+                },
+            selectTheater() {
+                this.theater = true;
+                this.show = false;
+                }
         }
     })
     app.mount('#app');

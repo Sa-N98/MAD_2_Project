@@ -273,7 +273,7 @@ def admin():
                 login_user(user)
                 return redirect(url_for('dashbord'))
             else:
-                massage = "User Not Found. Please Signup"
+                massage = "Admin Not Found. Please Signup"
                 return render_template('admin.html', massage=massage)
 
     return render_template('admin.html')
@@ -325,7 +325,6 @@ def dashbord():
         'top_venue':top_venue,
         'max_bookings':max_bookings,
         'users':users
-
     }
 
     return render_template('dashbord.html',data=data)
