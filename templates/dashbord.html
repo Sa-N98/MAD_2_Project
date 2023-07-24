@@ -7,9 +7,11 @@
     <script src='https://cdn.plot.ly/plotly-2.24.1.min.js'></script>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <title>Admin Dashbord</title>
 </head>
 <style>
+    
     body{
     font-family: Arial, Helvetica, sans-serif;
     background-color: #090C1A ;
@@ -320,6 +322,7 @@
     font-family: Arial, Helvetica, sans-serif;
     border-collapse: collapse;
     width: 100%;
+    overflow: scroll;
     }
 
     #show-table td, #show-table th {
@@ -327,7 +330,7 @@
     padding: 8px;
     }
 
-    #show-table tr:nth-child(even){background-color: #f2f2f2;}
+    #show-table tr{background-color: #f2f2f2;}
 
     #show-table tr:hover {background-color: #ddd;}
 
@@ -350,7 +353,7 @@
         padding: 8px;
     }
 
-    #theater-table tr:nth-child(even){background-color: #f2f2f2;}
+    #theater-table tr{background-color: #f2f2f2;}
 
     #theater-table tr:hover {background-color: #ddd;}
 
@@ -367,9 +370,78 @@
         width: 95%;
         translate: -50% -51px;
     }
+  
+    #headder{
+        position: relative;
+        width: 100%;
+        height: 45px;
+        background-color:#F0E5FC;
+        margin-bottom: 11px;
+        box-shadow: 0px 7px 5px 0px rgba(0,0,0,0.75);
+        border-radius: 7px;
+        box-sizing: border-box;
+        padding-top: 5px;
+    }
 
+    #headder p,
+    #headder a,
+    #headder h3,
+    #headder #add-buttons{
+        position: relative;
+        margin: 0;
+        display: inline-block;
+    }
+    #headder i{
+        position: relative;
+        top: 3px;
+    }
+    #logout{
+        top:7px;
+        float: right;
+        right: 20px;
+    }
+    #add-buttons{
+        left:50%;
+        transform: translate(-71%)
+    }
+    #headder h3{
+        margin-right: 20px;
+    }
+    #headder p{
+        left: 20px;
+        color:#962DFF
+    }
+    .deleteButtonContainer { 
+        padding: 0px !important; 
+    }
+    .deleteButton{
+        margin: 0;
+        width: 100%;
+        height: 34px;
+        box-sizing: border-box;
+        padding-top:7px;
+        background-color: rgb(197, 22, 22);
+        text-align: center;
+        color: aliceblue;
+        cursor: pointer;
+    }
+    .deleteButton:hover{
+        background-color: rgb(255, 0, 0);
+    }
 </style>
 <body>
+    <div id="headder">
+        <p>@ [[ current_user.username ]]</p>
+
+        <div id="add-buttons">
+        <i class="fa fa-plus-circle" style="font-size:28px;color:#962DFF"></i>
+        <a href="/admin/update_venue"><h3>Add Venue</h3></a>
+        <i class="fa fa-plus-circle" style="font-size:28px;color:#962DFF"></i>
+        <a href="/admin/update_show"> <h3>Add Show</h3></a>
+        </div>
+
+        <a href="[[ url_for('logout') ]]" id="logout">Logout</a>
+    </div>
     <div id="app">
         <div id='pichart'>
         <h4>TICKET BOOKING STAT</h4>
@@ -417,23 +489,28 @@
                 <div id='theater-buttton' @click="selectTheater">Theaters</div><div id='show-buttton' @click="selectShow">Shows</div>
             </div>
         </div>
+       
         <table id="show-table" v-if="show">
             <tr>
               <th style="width:18%">Name</th>
               <th style="width:38%">Location</th>
+              <th style="width:8%">Date</th>
               <th style="width:8%">Seats</th>
               <th style="width:8%">price</th>
               <th style="width:7%"></th>
             </tr>
-            <tr>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
+            
+            <tr v-for="show in shows">
+              <td>{{show[0]}}</td>
+              <td>{{show[1]}} - {{show[2]}}</td>
+              <td>{{show[4]}}</td>
+              <td>{{show[3]}}</td>
+              <td>{{show[5]}}</td>
+              <td class='deleteButtonContainer' @click="deleteShow(show[6])"  ><h3 class="deleteButton">DELETE</h3></td>
             </tr>
+    
         </table>
-
+       
         <table id="theater-table" v-if="theater">
             <tr>
               <th style="width:4%">Id</th>
@@ -441,11 +518,11 @@
               <th style="width:48%">Location</th>
               <th style="width:7%"></th>
             </tr>
-            <tr>
-              <td>2</td>
-              <td>Maria Anders</td>
-              <td>Germany</td>
-              <td></td>
+            <tr v-for="venue in theaters">
+              <td>{{ venue[0] }}</td>
+              <td>{{ venue[1] }}</td>
+              <td>{{ venue[2] }}</td>
+              <td class='deleteButtonContainer' @click="deleteVenue(venue[0])"  ><h3 class="deleteButton">DELETE</h3></td>
             </tr>
             
           </table>
@@ -470,10 +547,14 @@
                 users:null,
                 theater:false,
                 show:true,
+                theaters:null,
+                shows:null
             }
         },
         mounted(){
             let temp= [[ data|tojson ]]
+            this.theaters=temp.venuue_data
+            this.shows=temp.show_data
             this.top_poster=temp.poster
             this.top_venue=temp.top_venue[0]
             this.top_venue_place=temp.top_venue[1]
@@ -562,6 +643,34 @@
             selectTheater() {
                 this.theater = true;
                 this.show = false;
+                },
+            deleteVenue(id){
+                    axios.delete(`/api/venue/${id}`)
+                        .then(response => {
+                            // Handle successful deletion if the server returns a response
+                            console.log('Venue deleted successfully!', response.data);
+                            return axios.get('/api/update_venue_data');
+                        }).then(response => {
+                            this.theaters = response.data;
+                        })
+                        .catch(error => {
+                            // Handle error if the deletion fails or server returns an error
+                            console.error('Error deleting venue:', error);
+                        });
+                },
+            deleteShow(ids){
+                    axios.delete(`/api/show/${ids[0]}/${ids[1]}/${ids[2]}`)
+                        .then(response => {
+                            // Handle successful deletion if the server returns a response
+                            console.log('Show deleted successfully!', response.data);
+                            return axios.get('/api/update_show_data');
+                        }).then(response => {
+                            this.shows = response.data;
+                        })
+                        .catch(error => {
+                            // Handle error if the deletion fails or server returns an error
+                            console.error('Error deleting venue:', error);
+                        });
                 }
         }
     })

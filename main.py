@@ -1,4 +1,5 @@
 import os
+import requests
 from sqlalchemy import and_
 from application.model import *
 from application.api import*
@@ -6,6 +7,7 @@ from flask_security.utils import hash_password, verify_password
 from flask_restful import Api
 from flask import Flask, render_template, request, redirect, url_for, jsonify
 from flask_security import Security, SQLAlchemyUserDatastore, login_required, logout_user, login_user
+from werkzeug.utils import secure_filename
 
 
 current_dir = os.path.abspath(os.path.dirname(__file__))
@@ -18,6 +20,8 @@ app.config['SECURITY_PASSWORD_SALT'] = 'salt'
 app.jinja_options = app.jinja_options.copy()
 app.jinja_options['variable_start_string'] = '[[ '
 app.jinja_options['variable_end_string'] = ' ]]'
+UPLOAD_FOLDER = "static/Images"
+app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 
 
 db.init_app(app)
@@ -26,6 +30,8 @@ app.app_context().push()
 api = Api(app)
 api.add_resource(show_booking, '/api/show_booking')
 api.add_resource(show_cancel, '/api/show_cancel','/api/show_cancel/<bookind_id>')
+api.add_resource(venue_update, '/api/venue','/api/venue/<venue_id>')
+api.add_resource(show_update, '/api/show','/api/show/<sid>/<vid>/<did>')
 
 user_datastore = SQLAlchemyUserDatastore(db, User, Role)
 security = Security(app, user_datastore)
@@ -316,6 +322,20 @@ def dashbord():
     print(poster)
    
     users=len(User.query.filter(User.role=='user').all())
+    
+    venuue_data=list()
+    v_tmp=venue.query.all()
+    for v in v_tmp:
+        venuue_data.append([v.id,v.name,v.place])
+    
+    show_data=list()
+    for shows in show.query.all():
+        for dates in date.query.all():
+            for info in infos:
+                for v in v_tmp:
+                    if shows.id==info.s_id and v.id==info.v_id and dates.id==info.d_id:
+                        show_data.append([shows.name,v.name,v.place,info.seats,dates.dates,info.price,[info.s_id,info.v_id,info.d_id]])
+
 
     data={
         "movie_name":movie_name,
@@ -324,10 +344,92 @@ def dashbord():
         "poster":poster,
         'top_venue':top_venue,
         'max_bookings':max_bookings,
-        'users':users
-    }
+        'users':users,
+        'venuue_data':venuue_data,
+        'show_data':show_data
+        }
 
     return render_template('dashbord.html',data=data)
+
+@app.route("/admin/update_venue", methods=['POST', 'GET'])
+def update_venue():
+    return render_template('add_venue.html')
+@app.route("/api/update_venue_data", methods=['POST', 'GET'])
+def venue_data():
+    venuue_data=list()
+    v_tmp=venue.query.all()
+    for v in v_tmp:
+        venuue_data.append([v.id,v.name,v.place])
+    return venuue_data
+
+@app.route("/admin/update_show", methods=['POST', 'GET'])
+def update_show():
+    return render_template('add_show.html')
+@app.route("/api/update_show_data", methods=['POST', 'GET'])
+def shows_data():
+    show_data=list()
+    # for info in Show_Venue.query.all():
+    #     for shows in show.query.all():
+    #         for venue in shows.venue :
+    #             for date in shows.dates:
+    #                 if venue.id==info.v_id and date.id==info.d_id:
+    #                     show_data.append([shows.name, venue.name, venue.place,date.dates,info.seats,info.price])
+    query_result = Show_Venue.query\
+                    .join(show, Show_Venue.s_id == show.id)\
+                    .join(venue, Show_Venue.v_id == venue.id)\
+                    .join(date, Show_Venue.d_id == date.id)\
+                    .with_entities(show.name, venue.name, venue.place, date.dates, Show_Venue.seats, Show_Venue.price,Show_Venue.s_id,Show_Venue.v_id,Show_Venue.d_id)\
+                    .all()
+
+    for data in query_result:
+        show_data.append([data[0], data[1], data[2], data[3], data[4], data[5],[data[6],data[7],data[8]]])
+    return show_data
+
+# Specify the allowed file extensions
+ALLOWED_EXTENSIONS = set(["png", "jpg", "jpeg", "webp"])
+
+# Check if the file is an allowed type
+def allowed_file(filename):
+  return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
+
+@app.route("/show-add", methods=["POST"])
+def upload_file():
+  if request.method == "POST":
+    # Check if a file was uploaded
+    if "imageToUpload" not in request.files and 'banner' not in request.files:
+      return redirect(update_show)
+    file1 = request.files["imageToUpload"]
+    file2 = request.files["banner"]
+    # Check if the file name is empty
+    if file1.filename == "" and file2.filename == "":
+      return redirect(update_show)
+    # Check if the file is valid and save it
+    if file1 and allowed_file(file1.filename) and file2 and allowed_file(file2.filename):
+      filename_poster = secure_filename(file1.filename)
+      filename_banner = secure_filename(file2.filename)
+      file1.save(os.path.join(app.config["UPLOAD_FOLDER"], filename_poster ))
+      file2.save(os.path.join(app.config["UPLOAD_FOLDER"], filename_banner ))
+      Movie = request.form['Movie']
+      place = request.form['place']
+      rating = request.form['rating']
+      date = request.form['date']
+      seats = request.form['seats']
+      price = request.form['price']
+
+      url = 'http://127.0.0.1:5000/api/show'
+      data = {  'place': place,
+                'movie':f"{Movie}",
+                'posterURL': '/' + os.path.join(app.config["UPLOAD_FOLDER"]) + '/' + filename_poster,
+                'bannerURL': '/' + os.path.join(app.config["UPLOAD_FOLDER"]) + '/' + filename_banner,
+                'date': date,
+                'rating': rating,
+                'seats': seats,
+                'price': price
+                }
+      requests.post(url, json=data)
+      return redirect(url_for("update_show"))
+    else:
+      return redirect(request.url)
 
 
 

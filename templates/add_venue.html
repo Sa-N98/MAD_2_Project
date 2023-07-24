@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <title>Document</title>
+</head>
+<style>
+    *{
+        margin: 0;
+    }
+    body{
+        font-family: Arial, Helvetica, sans-serif;
+        background-color: #090C1A ;
+        }
+    a:link {
+        color: white;
+        text-decoration: none;
+        }
+
+    a:visited {
+        color: white;
+        text-decoration: none;
+        }
+    #home{
+        padding-top: 13px;
+        padding-left: 20px;
+        }
+    #logout{
+        position: relative;
+        top:20px;
+        right: 20px;
+        float: right;
+    }
+    #theater-table {
+        font-family: Arial, Helvetica, sans-serif;
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+    #theater-table td, #theater-table th {
+        border: 1px solid #ddd;
+        padding: 8px;
+    }
+
+    #theater-table tr{background-color: #f2f2f2;}
+
+    #theater-table tr:hover {background-color: #ddd;}
+
+    #theater-table th {
+        padding-top: 12px;
+        padding-bottom: 12px;
+        text-align: left;
+        background-color: #962DFF;
+        color: white;
+    }
+    #theater-table{
+        position: relative;
+        left: 50%;
+        width: 100%;
+        translate: -50% -1px;
+    }
+    #table-container {
+        max-height: 411px; /* Set the desired height for the container */
+        overflow-y: auto; /* Add a vertical scrollbar when content exceeds the container height */
+        border-radius: 7px;
+        width: 95%;
+        position: relative;
+        left: 50%;
+        translate: -50% 20px;
+    }
+    #table-header {
+        position: sticky;
+        top: 0;
+        background-color: #962DFF;
+        color: white;
+    }
+    #table-container::-webkit-scrollbar {
+        width: 0.1em;
+        background-color: transparent;
+    }
+
+    /* Hide the scrollbar in Mozilla Firefox */
+    #table-container {
+        scrollbar-width: none;
+    }
+    
+    input[type=text], input[type=number],select {
+        width: 100%;
+        padding: 12px 20px;
+        margin: 8px 0;
+        display: inline-block;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+        }
+
+    input[type=submit] {
+        width: 100%;
+        background-color:#962DFF;
+        color: white;
+        padding: 14px 20px;
+        margin: 8px 0;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        }
+
+    input[type=submit]:hover {
+        background-color: #7a0ee7;
+        }
+
+    #add-form, #update-form{
+        position: relative;
+        left: 55%;
+        transform: translate(-146%);
+        margin-right: 256px;
+        border-radius: 5px;
+        background-color: #f2f2f2;
+        padding: 20px;
+        width: 430px;
+        }
+    #form{
+        display: flex;
+        transform: translate(0%, 40px);
+    }
+    .form_label{
+        position: relative;
+        top: -10px;
+    }
+    #move{
+        position: relative;
+        top:74px
+    }
+    .deleteButtonContainer { 
+        padding: 0px !important; 
+    }
+    .deleteButton{
+        width: 100%;
+        height: 34px;
+        box-sizing: border-box;
+        padding-top:7px;
+        background-color: rgb(197, 22, 22);
+        text-align: center;
+        color: aliceblue;
+        cursor: pointer;
+    }
+    .deleteButton:hover{
+        background-color: rgb(255, 0, 0);
+    }
+</style>
+<body>
+    <a href="/dashbord" ><i class="fa fa-home" id="home" style="font-size:30px;color:#f8f2ff"></i></a>
+    <a href="[[ url_for('logout') ]]" id="logout">Logout</a>
+    <div id="app">
+        <div id="table-container">
+        <table id="theater-table">
+            <thead id="table-header">
+                <tr>
+                    <th style="width:4%">Id</th>
+                    <th style="width:18%">Theater</th>
+                    <th style="width:48%">Location</th>
+                    <th style="width:7%"></th>
+                </tr>
+            </thead>
+            <tr v-for="venue in tableData">
+              <td >{{ venue[0] }}</td>
+              <td>{{ venue[1] }}</td>
+              <td>{{ venue[2] }}</td>
+              <td class='deleteButtonContainer' @click="deleteVenue(venue[0])"  ><h3 class="deleteButton">DELETE</h3></td>
+            </tr>
+        </table>
+    </div>
+    
+   
+    
+    <div id="form">
+        
+        <div id="add-form">
+            <h2 class="form_label">Add New Theater</h2>
+        <form id="addForm">
+            <label for="Venue_name">Theater Name</label>
+            <input type="text" id="fname" name="theater" placeholder="Theater Name..">
+
+            <label for="place">Location</label>
+            <input type="text" id="lname" name="place" placeholder="Theater location..">
+
+            <input id="move" type="submit" value="Submit" @click="add">
+        </form>
+        </div>
+
+        
+
+    <div id="update-form">
+        <h2 class="form_label">Update A Theater</h2>
+    <form id="updateForm">
+        <label for="Venue_id">Theater id</label>
+        <input type="number" id="fname" name="id" placeholder="Theater ID.." min="0">
+    
+        <label for="Venue_name">Theater Name</label>
+        <input type="text" id="fname" name="theater" placeholder="Theater Name..">
+
+        <label for="place">Location</label>
+        <input type="text" id="lname" name="place" placeholder="Theater location..">
+
+        <input type="submit" value="Submit" @click="update">
+    </form>
+    </div>
+</div>
+    </div>
+   
+   <script>
+        const app = Vue.createApp({
+            data(){
+                return{
+                    tableData:null
+                }
+            },
+            mounted(){
+                    axios.get('/api/update_venue_data')
+                        .then(response => {
+                           this.tableData=response.data
+                        })
+                        .catch(error => {
+                            console.error(error);
+                        });
+            },
+            methods:{
+                add(){
+                    event.preventDefault();
+                    let formData = new FormData(addForm);
+                    const formValues = {};
+                    for (let [key, value] of formData.entries()) {
+                        formValues[key] = value;
+                    }
+                    axios.post('/api/venue', formValues)
+                        .then(response => {
+                            console.log("Form data sent successfully!", response.data);
+                            // Handle the response from the API if needed
+                            return axios.get('/api/update_venue_data');
+                        })
+                        .then(response => {
+                            this.tableData = response.data;
+                        })
+                        .catch(error => {
+                            console.error("Error sending form data:", error);
+                            // Handle errors if the request fails
+                        });
+                    document.getElementById('addForm').reset();
+                },
+
+                deleteVenue(id){
+                    axios.delete(`/api/venue/${id}`)
+                        .then(response => {
+                            // Handle successful deletion if the server returns a response
+                            console.log('Venue deleted successfully!', response.data);
+                            return axios.get('/api/update_venue_data');
+                        }).then(response => {
+                            this.tableData = response.data;
+                        })
+                        .catch(error => {
+                            // Handle error if the deletion fails or server returns an error
+                            console.error('Error deleting venue:', error);
+                        });
+                },
+
+                update(){
+                    event.preventDefault();
+                    let formData = new FormData(updateForm);
+                    const formValues = {};
+                    for (let [key, value] of formData.entries()) {
+                        formValues[key] = value;
+                    };
+                    axios.put('/api/venue', formValues)
+                        .then(response => {
+                            console.log(response.data);
+                            // Handle the response from the API if needed
+                            return axios.get('/api/update_venue_data');
+                        })
+                        .then(response => {
+                            this.tableData = response.data;
+                        })
+                        .catch(error => {
+                            console.error("Error sending form data:", error);
+                            // Handle errors if the request fails
+                        });
+                  
+                    document.getElementById('addForm').reset();
+                }
+            }
+        })
+        app.mount('#app')
+    </script>
+</body>
+</html>
