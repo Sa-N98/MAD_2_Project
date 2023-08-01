@@ -8,6 +8,7 @@ from flask_restful import Api
 from flask import Flask, render_template, request, redirect, url_for, jsonify
 from flask_security import Security, SQLAlchemyUserDatastore, login_required, logout_user, login_user
 from werkzeug.utils import secure_filename
+from flask_jwt_extended import JWTManager, create_access_token, jwt_required
 
 
 current_dir = os.path.abspath(os.path.dirname(__file__))
@@ -20,11 +21,13 @@ app.config['SECURITY_PASSWORD_SALT'] = 'salt'
 app.jinja_options = app.jinja_options.copy()
 app.jinja_options['variable_start_string'] = '[[ '
 app.jinja_options['variable_end_string'] = ' ]]'
+app.config['JWT_SECRET_KEY'] = 'TOP_secret_key' 
 UPLOAD_FOLDER = "static/Images"
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 
 
 db.init_app(app)
+jwt = JWTManager(app)
 app.app_context().push()
 
 api = Api(app)
@@ -53,7 +56,9 @@ def index():
                 email=request.form.get('email')).first()
             if user and user.role=='user' and verify_password(password, user.password):
                 login_user(user)
-                return redirect(url_for('welcome'))
+                global access_token
+                access_token = create_access_token(identity=user.email)
+                return redirect(url_for('welcome', access_token=access_token))
             else:
                 massage = "User Not Found. Please Signup"
                 return render_template('login_and_signup.html', massage=massage)
@@ -106,14 +111,14 @@ def movie(title):
         'poster': Show[0].poster,
         'rating': Show[0].rating,
     }
-    print(movie_data)
+    # print(movie_data)
     return jsonify(movie_data)
 
 
 @app.route('/welcome')
 @login_required
 def welcome():
-    return render_template('welcome.html')
+    return render_template('welcome.html',access_token=access_token)
 @app.route('/api/welcome')
 @login_required
 def show_data():
@@ -277,7 +282,9 @@ def admin():
                 email=request.form.get('email')).first()
             if user and user.role=='admin' and verify_password(password, user.password):
                 login_user(user)
-                return redirect(url_for('dashbord'))
+                global access_token_admin
+                access_token_admin = create_access_token(identity=user.email)
+                return redirect(url_for('dashbord', access_token=access_token_admin))
             else:
                 massage = "Admin Not Found. Please Signup"
                 return render_template('admin.html', massage=massage)
@@ -285,6 +292,7 @@ def admin():
     return render_template('admin.html')
 
 @app.route("/dashbord", methods=['POST', 'GET'])
+@login_required
 def dashbord():
     infos = Show_Venue.query.all()
     total_seats=0
@@ -349,12 +357,14 @@ def dashbord():
         'show_data':show_data
         }
 
-    return render_template('dashbord.html',data=data)
+    return render_template('dashbord.html',data=data,access_token=access_token_admin)
 
 @app.route("/admin/update_venue", methods=['POST', 'GET'])
+@login_required
 def update_venue():
     return render_template('add_venue.html')
 @app.route("/api/update_venue_data", methods=['POST', 'GET'])
+@login_required
 def venue_data():
     venuue_data=list()
     v_tmp=venue.query.all()
@@ -363,9 +373,11 @@ def venue_data():
     return venuue_data
 
 @app.route("/admin/update_show", methods=['POST', 'GET'])
+@login_required
 def update_show():
     return render_template('add_show.html')
 @app.route("/api/update_show_data", methods=['POST', 'GET'])
+@login_required
 def shows_data():
     show_data=list()
     # for info in Show_Venue.query.all():
@@ -385,53 +397,65 @@ def shows_data():
         show_data.append([data[0], data[1], data[2], data[3], data[4], data[5],[data[6],data[7],data[8]]])
     return show_data
 
-# Specify the allowed file extensions
-ALLOWED_EXTENSIONS = set(["png", "jpg", "jpeg", "webp"])
 
-# Check if the file is an allowed type
-def allowed_file(filename):
-  return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
+@app.route('/upload', methods=["POST"])
+@login_required
+@jwt_required()
+def upload():
+    form_id = request.form.get('form_id')
+    Movie = request.form.get('Movie')
+    place = request.form.get('place')
+    ratings = request.form.get('rating')
+    seats = request.form.get('seats')
+    price = request.form.get('price')
+    date = request.form.get('date')
+    movie_genre=request.form.get('genre')
+    if form_id=='upload':
+        banner_file = request.files['banner']
+        poster_file = request.files['poster']
+        banner_filename = secure_filename(banner_file.filename)
+        poster_filename = secure_filename(poster_file.filename)
+        if banner_filename.split('.')[-1].lower() in ['jpeg','png','jpg','webp']:
+            banner_path = os.path.join(app.config['UPLOAD_FOLDER'], banner_filename)
+            banner_file.save(banner_path)
+        else:
+            return jsonify(error="Invalid file extension for banner. Allowed extensions are: " + ', '.join(['jpeg','png','jpg','webp'])), 400
 
-@app.route("/show-add", methods=["POST"])
-def upload_file():
-  if request.method == "POST":
-    # Check if a file was uploaded
-    if "imageToUpload" not in request.files and 'banner' not in request.files:
-      return redirect(update_show)
-    file1 = request.files["imageToUpload"]
-    file2 = request.files["banner"]
-    # Check if the file name is empty
-    if file1.filename == "" and file2.filename == "":
-      return redirect(update_show)
-    # Check if the file is valid and save it
-    if file1 and allowed_file(file1.filename) and file2 and allowed_file(file2.filename):
-      filename_poster = secure_filename(file1.filename)
-      filename_banner = secure_filename(file2.filename)
-      file1.save(os.path.join(app.config["UPLOAD_FOLDER"], filename_poster ))
-      file2.save(os.path.join(app.config["UPLOAD_FOLDER"], filename_banner ))
-      Movie = request.form['Movie']
-      place = request.form['place']
-      rating = request.form['rating']
-      date = request.form['date']
-      seats = request.form['seats']
-      price = request.form['price']
+        if poster_filename.split('.')[-1].lower() in ['.jpeg','png','jpg','webp']:
+            poster_path = os.path.join(app.config['UPLOAD_FOLDER'], poster_filename)
+            poster_file.save(poster_path)
+        else:
+            return jsonify(error="Invalid file extension for banner. Allowed extensions are: " + ', '.join(['jpeg','png','jpg','webp'])), 400
+    
+    hostname = request.host.split(':')[0]
+    port = request.host.split(':')[1]
 
-      url = 'http://127.0.0.1:5000/api/show'
-      data = {  'place': place,
-                'movie':f"{Movie}",
-                'posterURL': '/' + os.path.join(app.config["UPLOAD_FOLDER"]) + '/' + filename_poster,
-                'bannerURL': '/' + os.path.join(app.config["UPLOAD_FOLDER"]) + '/' + filename_banner,
+    url = f'http://{hostname }:{port}/api/show'
+    headers = {"Authorization": f"Bearer {access_token_admin}"}
+    
+    if form_id=='upload':
+        data = { 'place': place,
+                'movie':Movie,
+                'posterURL': '/' + poster_path,
+                'bannerURL': '/' + banner_path,
                 'date': date,
-                'rating': rating,
+                'rating': ratings,
+                'seats': seats,
+                'price': price,
+                'genre':movie_genre
+            }
+        requests.post(url, json=data,headers=headers)
+    if form_id=='update':
+        data = { 'place': place,
+                'movie':Movie,
+                'date': date,
+                'rating': ratings,
                 'seats': seats,
                 'price': price
-                }
-      requests.post(url, json=data)
-      return redirect(url_for("update_show"))
-    else:
-      return redirect(request.url)
-
-
+            }
+        requests.put(url, json=data, headers=headers)
+    
+    return 'upload success'
 
 # use this rout in link in template to log out
 

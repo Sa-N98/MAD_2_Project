@@ -606,8 +606,9 @@
                             'dateID': this.venue[1][0],
                             'NO_tickets': this.$el.querySelector('#count').innerHTML
                         }
-
-                        axios.post('/api/show_booking', body)
+                        const token = localStorage.getItem('access_token');
+                        let header={headers: {'Authorization': `Bearer ${token}`}}
+                        axios.post('/api/show_booking', body, header)
                             .then(response => {
                                 console.log('Post created:', response.data);
                             })
@@ -615,7 +616,7 @@
                                 console.error('Error creating post:', error);
                             });
 
-                        axios.put('/api/show_booking', body)
+                        axios.put('/api/show_booking', body, header)
                             .then(response => {
                                 console.log('Put updated:', response.data);
                             })

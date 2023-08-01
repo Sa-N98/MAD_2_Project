@@ -306,7 +306,10 @@ background-color: #ff033e;
                             'dateID': this.data[6][3],
                             'NO_tickets':this.data[5]
                         }
-            axios.put('/api/show_cancel', body)
+
+            const token = localStorage.getItem('access_token');
+            let header={headers: {'Authorization': `Bearer ${token}`}}            
+            axios.put('/api/show_cancel', body, header)
                 .then(response => {
                     console.log('Put created:', response.data);
                 })
@@ -318,6 +321,7 @@ background-color: #ff033e;
 
             fetch(delete_url, {
               method: 'DELETE',
+              headers: {'Authorization': `Bearer ${token}`}
             })
               .then(response => {
                 if (response.ok) {

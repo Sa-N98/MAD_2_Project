@@ -236,7 +236,11 @@
                     for (let [key, value] of formData.entries()) {
                         formValues[key] = value;
                     }
-                    axios.post('/api/venue', formValues)
+
+                    const token = localStorage.getItem('admin_access_token');
+                    let header={headers: {'Authorization': `Bearer ${token}`}}
+
+                    axios.post('/api/venue', formValues,header)
                         .then(response => {
                             console.log("Form data sent successfully!", response.data);
                             // Handle the response from the API if needed
@@ -253,7 +257,9 @@
                 },
 
                 deleteVenue(id){
-                    axios.delete(`/api/venue/${id}`)
+                    const token = localStorage.getItem('admin_access_token');
+                    const headers = { "Authorization": `Bearer ${token}` };
+                    axios.delete(`/api/venue/${id}`,{ headers })
                         .then(response => {
                             // Handle successful deletion if the server returns a response
                             console.log('Venue deleted successfully!', response.data);
@@ -274,7 +280,11 @@
                     for (let [key, value] of formData.entries()) {
                         formValues[key] = value;
                     };
-                    axios.put('/api/venue', formValues)
+
+                    const token = localStorage.getItem('admin_access_token');
+                    let header={headers: {'Authorization': `Bearer ${token}`}}
+
+                    axios.put('/api/venue', formValues, header)
                         .then(response => {
                             console.log(response.data);
                             // Handle the response from the API if needed

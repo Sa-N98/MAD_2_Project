@@ -1,4 +1,5 @@
 from flask_restful import Resource,reqparse
+from flask_jwt_extended import jwt_required
 from application.model import *
 
 user_args = reqparse.RequestParser()
@@ -10,6 +11,7 @@ user_args.add_argument("dateID", type=str, required=True)
 user_args.add_argument("NO_tickets", type=int, required=True)
 
 class show_booking(Resource):
+    @jwt_required()
     def put(self):
         args = user_args.parse_args()
         show = Show_Venue.query.filter_by(s_id=args['movieID'],
@@ -23,7 +25,7 @@ class show_booking(Resource):
                 'venue-id':args['venueID'],
                 'date-id':args['dateID']
                 }
-
+    @jwt_required()
     def post(self):
         args = user_args.parse_args()
         booking = booked_shows(user_name=args['USER'],
@@ -56,6 +58,7 @@ cancel_args.add_argument("bookingID", type=int, required=True)
 
 
 class show_cancel(Resource):
+    @jwt_required()
     def put(self):
         args = cancel_args.parse_args()
         show_ = Show_Venue.query.filter_by(s_id=args['movieID'], 
@@ -66,6 +69,7 @@ class show_cancel(Resource):
         db.session.commit()
         return "Successfully cancelled"
     
+    @jwt_required()
     def delete(self,bookind_id):
         print(bookind_id)
         booking = booked_shows.query.filter_by(id=bookind_id).first()
@@ -83,12 +87,12 @@ admin_args.add_argument("posterURL", type=str)
 admin_args.add_argument("bannerURL", type=str)
 admin_args.add_argument("date", type=str)
 admin_args.add_argument("id", type=int)
-admin_args.add_argument("rating", type=int)
+admin_args.add_argument("rating", type=float)
 admin_args.add_argument("seats", type=int)
 admin_args.add_argument("price", type=int)
-
-
+admin_args.add_argument("genre", type=str)
 class venue_update(Resource):
+    @jwt_required()
     def post(self):
         args = admin_args.parse_args()
         new_venue = venue(name=args['theater'],
@@ -106,6 +110,7 @@ class venue_update(Resource):
                         }
                     }
         return response, 200
+    @jwt_required()
     def put(self):
         args = admin_args.parse_args()
         theater = venue.query.filter_by(id=args['id']).first()
@@ -116,6 +121,7 @@ class venue_update(Resource):
             return "Successfully Updated"
         return "Theater Not Found"
     
+    @jwt_required()
     def delete(self,venue_id):
         del_venue = venue.query.filter_by(id=venue_id).first()
         db.session.delete(del_venue)
@@ -129,10 +135,14 @@ class venue_update(Resource):
         return {'status':'deleated'}
 
 class show_update(Resource):
+    @jwt_required()
     def post(self):
+        print('start')
         args = admin_args.parse_args()
+        print(args)
         if show.query.filter_by(name=args['movie']).first():
             new_show=show.query.filter_by(name=args['movie']).first()
+            print('1',new_show)
         else:
             new_show = show(name=args['movie'],
                             poster=args['posterURL'],
@@ -141,7 +151,7 @@ class show_update(Resource):
                             )
             db.session.add(new_show)
             db.session.commit()
-
+        print('2',new_show)
         new_date=date.query.filter_by(dates=args['date']).first()
         if not new_date:
             new_date=date(dates=args['date'])
@@ -158,22 +168,36 @@ class show_update(Resource):
         db.session.add(new_show_venue)
         db.session.commit()
         print( new_show_venue.s_id)
+        
+        movie_type = genre.query.filter_by(type=args['genre']).first()
+        new_movie_genre = movie_g(g_id=movie_type.id, m_id=new_show.id)
+        db.session.add(new_movie_genre)
+        db.session.commit()
         response = {
             'status': 'success',
             'message': 'movie added'}
         return response, 200
     
-       
+    @jwt_required()
     def put(self):
         args = admin_args.parse_args()
-        theater = venue.query.filter_by(id=args['id']).first()
-        if theater:
-            theater.name = args['theater']
-            theater.place = args['place']
+        check = venue.query.filter_by(name=args['place']).first()
+        movie = show.query.filter_by(name=args['movie']).first()
+        time = date.query.filter_by(dates=args['date']).first()
+        
+        if check and movie and time :
+            show_ = Show_Venue.query.filter_by(s_id=movie.id, 
+                                               v_id=check.id, 
+                                               d_id=time.id).first()
+            show_.seats = show_.seats + args['seats']
+            show_.starting_seats = show_.starting_seats + args['seats']
+            show_.price=args['price']
+            movie.rating=args['rating']
             db.session.commit()
-            return "Successfully Updated"
-        return "Theater Not Found"
+            return "show was updated" 
+        return " the show dosnot exist"
     
+    @jwt_required()
     def delete(self,sid,vid,did):
         print(sid,vid,did)
         del_show=Show_Venue.query.filter_by(s_id=sid,v_id=vid,d_id=did).all()
@@ -182,5 +206,11 @@ class show_update(Resource):
             for item in del_show:
                 db.session.delete(item)
                 db.session.commit()
-
+        if not Show_Venue.query.filter_by(s_id=sid).all():
+            list=movie_g.query.filter_by(m_id=sid).all()
+            for item in list:
+                db.session.delete(item)
+                db.session.commit()
+            db.session.delete(show.query.filter_by(id=sid).first())
+            db.session.commit()
         return {'status':'deleated'}

@@ -645,7 +645,9 @@
                 this.show = false;
                 },
             deleteVenue(id){
-                    axios.delete(`/api/venue/${id}`)
+                    const token = localStorage.getItem('admin_access_token');
+                    const headers = { "Authorization": `Bearer ${token}` };
+                    axios.delete(`/api/venue/${id}`,{ headers })
                         .then(response => {
                             // Handle successful deletion if the server returns a response
                             console.log('Venue deleted successfully!', response.data);
@@ -659,7 +661,10 @@
                         });
                 },
             deleteShow(ids){
-                    axios.delete(`/api/show/${ids[0]}/${ids[1]}/${ids[2]}`)
+                    const token = localStorage.getItem('admin_access_token');
+                    const headers = { "Authorization": `Bearer ${token}` };
+
+                    axios.delete(`/api/show/${ids[0]}/${ids[1]}/${ids[2]}`, { headers })
                         .then(response => {
                             // Handle successful deletion if the server returns a response
                             console.log('Show deleted successfully!', response.data);
@@ -675,6 +680,8 @@
         }
     })
     app.mount('#app');
+    const admin_access_token = "[[ access_token ]]"
+    localStorage.setItem('admin_access_token', admin_access_token);
     </script>
 </body>
 </html>
