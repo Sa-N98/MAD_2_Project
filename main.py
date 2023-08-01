@@ -9,6 +9,7 @@ from flask import Flask, render_template, request, redirect, url_for, jsonify
 from flask_security import Security, SQLAlchemyUserDatastore, login_required, logout_user, login_user
 from werkzeug.utils import secure_filename
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required
+from celery_worker import make_celery
 
 
 current_dir = os.path.abspath(os.path.dirname(__file__))
@@ -24,11 +25,18 @@ app.jinja_options['variable_end_string'] = ' ]]'
 app.config['JWT_SECRET_KEY'] = 'TOP_secret_key' 
 UPLOAD_FOLDER = "static/Images"
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
-
+app.config.update(
+    CELERY_BROKER_URL='redis://localhost:6379',
+    CELERY_RESULT_BACKEND='redis://localhost:6379'
+)
 
 db.init_app(app)
 jwt = JWTManager(app)
+celery = make_celery(app)
 app.app_context().push()
+
+
+
 
 api = Api(app)
 api.add_resource(show_booking, '/api/show_booking')
