@@ -64,6 +64,7 @@ def index():
                 email=request.form.get('email')).first()
             if user and user.role=='user' and verify_password(password, user.password):
                 login_user(user)
+                user.log_login()
                 global access_token
                 access_token = create_access_token(identity=user.email)
                 return redirect(url_for('welcome', access_token=access_token))
@@ -371,6 +372,7 @@ def dashbord():
 @login_required
 def update_venue():
     return render_template('add_venue.html')
+
 @app.route("/api/update_venue_data", methods=['POST', 'GET'])
 @login_required
 def venue_data():
@@ -384,6 +386,7 @@ def venue_data():
 @login_required
 def update_show():
     return render_template('add_show.html')
+
 @app.route("/api/update_show_data", methods=['POST', 'GET'])
 @login_required
 def shows_data():

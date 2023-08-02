@@ -1,6 +1,8 @@
 from flask_sqlalchemy import SQLAlchemy
 from flask_security import  UserMixin, RoleMixin
+from datetime import datetime
 db = SQLAlchemy()
+
 
 
 
@@ -19,6 +21,11 @@ class User(db.Model,UserMixin):
     fs_uniquifier = db.Column(db.String)
     role=db.Column(db.String)
     roles = db.relationship('Role', secondary=roles_users, backref=db.backref('users',lazy='dynamic'))
+    last_login = db.Column(db.DateTime)
+
+    def log_login(self):
+        self.last_login = datetime.now()
+        db.session.commit()
 
 class Role(db.Model,RoleMixin):
     __tablename__ = 'Role'
