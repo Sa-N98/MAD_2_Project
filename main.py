@@ -391,12 +391,6 @@ def update_show():
 @login_required
 def shows_data():
     show_data=list()
-    # for info in Show_Venue.query.all():
-    #     for shows in show.query.all():
-    #         for venue in shows.venue :
-    #             for date in shows.dates:
-    #                 if venue.id==info.v_id and date.id==info.d_id:
-    #                     show_data.append([shows.name, venue.name, venue.place,date.dates,info.seats,info.price])
     query_result = Show_Venue.query\
                     .join(show, Show_Venue.s_id == show.id)\
                     .join(venue, Show_Venue.v_id == venue.id)\
@@ -467,6 +461,61 @@ def upload():
         requests.put(url, json=data, headers=headers)
     
     return 'upload success'
+
+
+
+@app.route('/test',methods=["POST","GET"])
+def test_page():
+    return render_template("test.html")
+
+
+############################# CELERY ##################################################
+import time
+
+@celery.task()
+def add_together(a,b):
+    time.sleep(5)
+    return a+b
+
+@celery.task
+def generate_csv():
+    # importing the csv module
+    import csv
+    time.sleep(6)
+ 
+    # field names
+    fields = ['Name', 'Branch', 'Year', 'CGPA']
+    
+    # data rows of csv file
+    rows = [ ['Nikhil', 'COE', '2', '9.0'],
+            ['Sanchit', 'COE', '2', '9.1'],
+            ['Aditya', 'IT', '2', '9.3'],
+            ['Sagar', 'SE', '1', '9.5'],
+            ['Prateek', 'MCE', '3', '7.8'],
+            ['Sahil', 'EP', '2', '9.1']]
+    
+    # writing to csv file
+    with open("static/data.csv", 'w') as csvfile:
+        # creating a csv writer object
+        csvwriter = csv.writer(csvfile)
+        
+        # writing the fields
+        csvwriter.writerow(fields)
+        
+        # writing the data rows
+        csvwriter.writerows(rows)
+
+    return "Job Started..."
+
+@app.route('/triger_celery_job',methods=["POST","GET"])
+def celery_job():
+    a= add_together.delay(4,4)
+    return {
+        'Task_ID':a.id,
+        "Task_State":a.state,
+        "Task_Result":a.result
+    }
+
 
 # use this rout in link in template to log out
 

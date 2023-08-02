@@ -2,7 +2,7 @@ from celery import Celery
 
 def make_celery(app):
     celery = Celery(
-        "app",
+        "main",
         backend=app.config['CELERY_RESULT_BACKEND'],
         broker=app.config['CELERY_BROKER_URL'],
         enable_utc = False,
