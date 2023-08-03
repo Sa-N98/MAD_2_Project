@@ -13,3 +13,7 @@ celery -A main.celery worker -l info
 
 ## run redis:
 redis-server
+
+## MailHog
+ ~/go/bin/MailHog
+http://172.20.129.66:8025
