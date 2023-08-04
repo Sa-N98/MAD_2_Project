@@ -1,15 +1,17 @@
 import os
+import csv
 import requests
 from sqlalchemy import and_
 from application.model import *
 from application.api import*
 from flask_security.utils import hash_password, verify_password
 from flask_restful import Api
-from flask import Flask, render_template, request, redirect, url_for, jsonify
+from flask import Flask, render_template, request, redirect, url_for, jsonify, send_file
 from flask_security import Security, SQLAlchemyUserDatastore, login_required, logout_user, login_user
 from werkzeug.utils import secure_filename
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required
 from celery_worker import make_celery
+from celery.result import AsyncResult
 
 
 current_dir = os.path.abspath(os.path.dirname(__file__))
@@ -478,21 +480,16 @@ def add_together(a,b):
     return a+b
 
 @celery.task
-def generate_csv():
-    # importing the csv module
-    import csv
-    time.sleep(6)
- 
-    # field names
-    fields = ['Name', 'Branch', 'Year', 'CGPA']
-    
-    # data rows of csv file
-    rows = [ ['Nikhil', 'COE', '2', '9.0'],
-            ['Sanchit', 'COE', '2', '9.1'],
-            ['Aditya', 'IT', '2', '9.3'],
-            ['Sagar', 'SE', '1', '9.5'],
-            ['Prateek', 'MCE', '3', '7.8'],
-            ['Sahil', 'EP', '2', '9.1']]
+def generate_csv(id):
+    # time.sleep(6)
+    rows=list()
+    venue_raw_data=Show_Venue.query.filter(Show_Venue.v_id==id).all()
+    for data in venue_raw_data:
+        name=show.query.filter(show.id==data.s_id).first().name
+        show_date=date.query.filter(date.id==data.d_id).first().dates
+        rows.append([name, show_date, data.starting_seats, data.seats, data.price])
+   
+    fields = ['Name', 'Date', 'Seats At Start', 'Seats','Price']
     
     # writing to csv file
     with open("static/data.csv", 'w') as csvfile:
@@ -507,14 +504,27 @@ def generate_csv():
 
     return "Job Started..."
 
-@app.route('/triger_celery_job',methods=["POST","GET"])
-def celery_job():
-    a= add_together.delay(4,4)
+@app.route("/triger_celery_job/<id>")
+def trigger_celery_job(id):
+    a = generate_csv.delay(id)
     return {
-        'Task_ID':a.id,
-        "Task_State":a.state,
-        "Task_Result":a.result
+        "Task_ID" : a.id,
+        "Task_State" : a.state,
+        "Task_Result" : a.result
     }
+
+@app.route("/status/<id>")
+def check_status(id):
+    res = AsyncResult(id, app = celery)
+    return {
+        "Task_ID" : res.id,
+        "Task_State" : res.state,
+        "Task_Result" : res.result
+    }
+
+@app.route("/download-file")
+def download_file():
+    return send_file("static/data.csv")
 
 
 # use this rout in link in template to log out
