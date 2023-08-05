@@ -12,6 +12,14 @@ from werkzeug.utils import secure_filename
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required
 from celery_worker import make_celery
 from celery.result import AsyncResult
+from celery.schedules import crontab
+from datetime import timedelta
+from Email import send_email
+from datetime import datetime
+import calendar
+import pdfkit
+
+
 
 
 current_dir = os.path.abspath(os.path.dirname(__file__))
@@ -29,7 +37,7 @@ UPLOAD_FOLDER = "static/Images"
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 app.config.update(
     CELERY_BROKER_URL='redis://localhost:6379',
-    CELERY_RESULT_BACKEND='redis://localhost:6379'
+    result_backend='redis://localhost:6379'
 )
 
 db.init_app(app)
@@ -474,11 +482,6 @@ def test_page():
 ############################# CELERY ##################################################
 import time
 
-@celery.task()
-def add_together(a,b):
-    time.sleep(5)
-    return a+b
-
 @celery.task
 def generate_csv(id):
     # time.sleep(6)
@@ -527,9 +530,78 @@ def download_file():
     return send_file("static/data.csv")
 
 
+@celery.task
+def send_daily_reminder():
+    users = User.query.filter_by(role='user').all()
+    for user in users:
+        current_date_time = datetime.now()
+        time_difference = current_date_time - user.last_login
+        if time_difference.days >= 1:
+            message=render_template('dailey_html_template.html', user_name=user.username )
+            send_email(to_address=user.email, subject="Reconnect with Showcase: Your Latest Movie Booking Update", message=message)
+    
+
+
+celery.conf.beat_schedule = {
+    'my_periodic_task_schedule': {
+        'task': 'main.send_daily_reminder', 
+        # 'schedule': timedelta(seconds=5) 
+        'schedule': crontab(hour=13, minute=20)
+    },
+}
+
+
+@celery.task
+def monthley_report():
+    users = User.query.filter_by(role='user').all()
+    current_month = datetime.now().month
+    month_name = calendar.month_name[current_month]
+    for user in users:
+        shows = booked_shows.query.filter_by(user_name=user.username).all()
+
+        num_movies_booked=len(shows)
+
+        num_tickets_bought=0
+        for movie in shows:
+            num_tickets_bought=num_tickets_bought + movie.NO_tickets
+        
+        shows_booked_by_users=list()
+
+        for info in shows:
+            movie_name=show.query.filter(show.id == info.movieID).first().name
+            venue_name=venue.query.filter(venue.id == info.venueID).first().name
+            movie_dates=date.query.filter(date.id == info.dateID).first().dates
+            tickets=info.NO_tickets 
+            shows_booked_by_users.append([movie_name,venue_name,movie_dates,tickets])
+
+        message=render_template('monthley_report.html', 
+                                month=month_name, 
+                                num_movies_booked=num_movies_booked, 
+                                num_tickets_bought=num_tickets_bought,
+                                data = shows_booked_by_users )
+        
+        from weasyprint import HTML
+        from io import BytesIO  
+        pdf_bytes = BytesIO()
+        HTML(string=message).write_pdf(target=pdf_bytes)
+        pdf_bytes.seek(0)
+        pdf_content = pdf_bytes.read()
+
+
+        
+        send_email(to_address=user.email, subject="🎬 Your Monthly Movie Booking Report from Showcase", message=message,attachment=pdf_content )
+
+
+celery.conf.beat_schedule = {
+    'my_periodic_task_schedule': {
+        'task': 'main.monthley_report', 
+        # 'schedule': timedelta(seconds=5) 
+        'schedule': crontab(day_of_month=1, hour=0, minute=0)
+    },
+}
+
+
 # use this rout in link in template to log out
-
-
 @app.route('/logout')
 def logout():
     logout_user()

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Showcase Movie Booking App - Monthly Report</title>
+    <style>
+      @page {
+              size: A4 portrait; 
+              margin: 0;
+          }
+          
+        body {
+            font-family: 'Segoe UI';
+            line-height: 1.6;
+            background-color: #f7f7f7;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border: 1px solid #e1e1e1;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            position: relative;
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+        h1 {
+            color: #007bff;
+            text-align: center;
+        }
+        p {
+            color: #666666;
+            margin-bottom: 10px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border: 1px solid #dddddd;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        li {
+            color: #666666;
+            margin-bottom: 5px;
+        }
+        .thank-you {
+            color: #007bff;
+            font-weight: bold;
+        }
+        .signature {
+            color: #555555;
+            text-align: right;
+        }
+        #headder{
+            position:relative;
+            margin:0px;
+            margin-left:-20px;
+            margin-right:-20px;
+            padding-left:10px;
+            padding-right:10px;
+            padding-top:50px;
+            padding-bottom:235px;
+            top:-20px;
+            background-color:red;
+            color:white;
+            filter:brightness(80%);
+            background-image: url('https://lh3.googleusercontent.com/u/0/drive-viewer/AITFw-yAML_SznUR4WGdXCVvI8jvpdkF4PNHhjS6zZflMa2v_vormoEibbd_PI2PzV7KRYxP3BI0xNkGRkpeLMQD44CTirlomg=w1920-h727');
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-position: 0px -70px;
+            
+        }
+         #text{
+         position: absolute;
+        color:white;
+        letter-spacing:2.6px;
+        font-size:52px;
+        font-weight:900;
+        filter:brightness(1120%);
+        top:12px;
+        margin:0px;
+        margin-left:-20px;
+        padding-left:10px;
+        padding-right:10px;
+        
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id=headder></div>
+        <h1 id=text>Showcase App User's Monthly  Report</h1>
+        <p>Dear User,</p>
+        <p>Here's your monthly report for the past month:</p>
+        <table>
+            <thead>
+                <tr>
+                    <th>Month</th>
+                    <th>Number of Movies Booked</th>
+                    <th>Number of Tickets Bought</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>[[ month ]]</td>
+                    <td>[[ num_movies_booked ]]</td>
+                    <td>[[ num_tickets_bought ]]</td>
+                </tr>
+            </tbody>
+        </table>
+        <p style="color: #666666;">Movies Booked:</p>
+        <ul style="list-style: none; padding-left: 0;">
+            {% for i in data %}
+            <li style="color: #666666;">[[ i[0] ]] - [[ i[3] ]] tickets</li>
+            {% endfor %}
+        </ul>
+        <p class="thank-you">Thank you for using the Showcase Movie Booking App!</p>
+        <p class="signature">Best regards,<br>The Showcase Team</p>
+    </div>
+</body>
+</html>

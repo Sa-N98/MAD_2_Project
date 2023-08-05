@@ -3,7 +3,7 @@ from celery import Celery
 def make_celery(app):
     celery = Celery(
         "main",
-        backend=app.config['CELERY_RESULT_BACKEND'],
+        backend=app.config['result_backend'],
         broker=app.config['CELERY_BROKER_URL'],
         enable_utc = False,
         timezone = "Asia/Calcutta"
