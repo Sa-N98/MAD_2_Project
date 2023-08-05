@@ -1,0 +1,140 @@
+
+body {
+background: url("\\static\\Images\\admin_wallpaper.jpg") no-repeat center center fixed;
+-webkit-background-size: cover;
+-moz-background-size: cover;
+-o-background-size: cover;
+background-size: cover;
+}
+
+
+#mainBox {
+width: 313px;
+/*background-color:  #f2f2f2;*/
+background: rgba(40, 40, 40, 0.6);
+backdrop-filter: saturate(200%) blur(7px);
+box-shadow: 0 4px 18px 0 rgba(0, 0, 0, 0.5), 0 6px 20px 0 rgba(0, 0, 0, 0.9);
+border-radius: 8px;
+padding: 20px;
+overflow: hidden;
+position: relative;
+top: 50px;
+margin: auto;
+}
+
+
+#loginSignupBox {
+width: 597px;
+border-radius: 5px;
+padding: 20px;
+/*background-color:  red;*/
+position: relative;
+
+}
+
+
+input[type=text],
+input[type=password],
+input[type=email] {
+color: white;
+width: 100%;
+padding: 12px 20px;
+margin: 10px 0px 20px 0px;
+display: inline-block;
+border: 1px solid #ccc;
+border-radius: 4px;
+box-sizing: border-box;
+background: rgba(80, 80, 80, 0.6);
+}
+
+input[type=submit] {
+width: 100%;
+background-color: #ff033e;
+color: white;
+padding: 14px 20px;
+margin: 28px 0;
+border: none;
+border-radius: 4px;
+cursor: pointer;
+}
+
+input[type=submit]:hover {
+background-color: #d00030;
+}
+
+#login {
+width: 270px;
+display: inline-block;
+margin-right: 50px;
+/*background-color:  blue;*/
+position: relative;
+top: -106px;
+margin-left: 0px
+}
+
+#login.move-left {
+animation: move-l 0.5s forwards;
+}
+
+#login.move-right {
+animation: move-r 0.5s forwards;
+}
+
+
+
+@keyframes move-l {
+from {
+margin-left: 0px
+}
+
+to {
+margin-left: -322px
+}
+}
+
+
+@keyframes move-r {
+from {
+margin-left: -322px
+}
+
+to {
+margin-left: 0px
+}
+}
+
+#signup {
+width: 270px;
+display: inline-block;
+/*background-color:  yellow;*/
+
+}
+
+label {
+color: white;
+font-size: 30px;
+font-family: Arial, Helvetica, sans-serif;
+font-weight: bold;
+}
+
+button {
+color: white;
+width: 100px;
+height: 30px;
+border-radius: 5px;
+background-color: #ff033e;
+border: none;
+}
+
+button:hover {
+background-color: #d00030;
+}
+
+#massage {
+color: #ccc;
+font-family: Arial, Helvetica, sans-serif;
+position: relative;
+top: -26px;
+margin: 0;
+
+}

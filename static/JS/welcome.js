@@ -93,19 +93,22 @@ app.component('movie-cards', {
     data() {
         return {
             cards: null,
-            poster: '',
-            rating: '',
-            summary: '',
+            poster: sessionStorage.getItem(this.title +' poster'),
+            rating: sessionStorage.getItem(this.title +' rating'),
+            summary: sessionStorage.getItem(this.title +' summary'),
             show_id: '/booking/'
         }
     },
 
     mounted() {
+
         url = '/api/movie/' + this.title
         axios.get(url)
             .then(response => {
                 this.rating = response.data.rating
+                sessionStorage.setItem(this.title+' rating', this.rating)
                 this.poster = response.data.poster
+                sessionStorage.setItem(this.title+' poster', this.poster)
                 let id = response.data.id
                 this.show_id = this.show_id + id
             })
@@ -117,6 +120,7 @@ app.component('movie-cards', {
         axios.get(url)
             .then(response => {
                 this.summary = response.data.Plot
+                sessionStorage.setItem(this.title+' summary', this.summary)
             }).catch(error => {
                 console.error(error);
             });
@@ -161,6 +165,3 @@ setTimeout(() => {
                         });
                     }
 }, 500);
-
-const access_token = "[[ access_token ]]"
-localStorage.setItem('access_token', access_token);

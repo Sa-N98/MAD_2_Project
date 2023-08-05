@@ -542,13 +542,13 @@ def send_daily_reminder():
     
 
 
-celery.conf.beat_schedule = {
-    'my_periodic_task_schedule': {
-        'task': 'main.send_daily_reminder', 
-        # 'schedule': timedelta(seconds=5) 
-        'schedule': crontab(hour=13, minute=20)
-    },
-}
+# celery.conf.beat_schedule = {
+#     'my_periodic_task_schedule': {
+#         'task': 'main.send_daily_reminder', 
+#         'schedule': timedelta(seconds=5) 
+#         # 'schedule': crontab(hour=13, minute=20)
+#     },
+# }
 
 
 @celery.task
@@ -595,11 +595,16 @@ def monthley_report():
 celery.conf.beat_schedule = {
     'my_periodic_task_schedule': {
         'task': 'main.monthley_report', 
-        # 'schedule': timedelta(seconds=5) 
+        # 'schedule': timedelta(seconds=15) 
         'schedule': crontab(day_of_month=1, hour=0, minute=0)
     },
-}
 
+    'my_dayley_task_schedule': {
+        'task': 'main.send_daily_reminder', 
+        # 'schedule': timedelta(seconds=5) 
+        'schedule': crontab(hour=13, minute=20)
+    },
+}
 
 # use this rout in link in template to log out
 @app.route('/logout')
