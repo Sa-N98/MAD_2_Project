@@ -212,7 +212,7 @@
          <form id="addForm"  method="POST" action="/upload"><!--method="POST" action="/upload" -->
             <input type="hidden" name="form_id" value="upload">
             <label for="Venue_name">Movie Name</label>
-            <input type="text"  name="Movie" placeholder="Movie Name..">
+            <input type="text"  name="Movie" placeholder="Movie Name.." required>
 
             <label for="place">Location</label>
             <select id="place" name="place" required>
@@ -226,32 +226,32 @@
             </select>
             <div class="small">
             <label for="rating" >Rating</label>
-            <input type="number"  name="rating" placeholder="Rating.." min="1" max="5" step="0.1" >
+            <input type="number"  name="rating" placeholder="Rating.." min="1" max="5" step="0.1" required>
             </div>
             <div class="small">
             <label for="Price" >Price</label>
-            <input type="number"  name="price" placeholder="Price.." min="1" max="500" >
+            <input type="number"  name="price" placeholder="Price.." min="1" max="500" required>
             </div>
             
             <div class="small">
             <label for="seats" >Seats</label>
-            <input type="number"  name="seats" placeholder="Seats.." min="1" max="200" >
+            <input type="number"  name="seats" placeholder="Seats.." min="1" max="200" required>
             </div>
             
             <div class="small">
             <label for="date" >Date</label>
             <input type="text" name="date"
                 pattern="(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)-(0[1-9]|[12][0-9]|3[01])"
-                placeholder="Mar-23" >
+                placeholder="Mar-23" required>
             </div>
              
             <div class="small">
             <label for="poster" >Poster</label>
-            <input type="file" name="poster" >
+            <input type="file" name="poster" required>
             </div>
             <div class="small">
             <label for="banner" >Banner</label>
-            <input type="file" name="banner" >
+            <input type="file" name="banner" required>
             </div>
             <input id="move" type="submit" value="Submit" @click="add">
         </form>
@@ -266,7 +266,7 @@
         <label id="selectionLable">Select Show</label>
         <div id="selectionContainer">
             <label for="Venue_name">Movie Name</label>
-            <input type="text"  name="Movie" placeholder="Movie Name..">
+            <input type="text"  name="Movie" placeholder="Movie Name.." required>
 
             <label for="place">Location</label>
             <select id="place" name="place" required>
@@ -277,20 +277,20 @@
             <label for="date" >Date</label>
             <input type="text" name="date"
                 pattern="(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)-(0[1-9]|[12][0-9]|3[01])"
-                placeholder="Mar-23" >
+                placeholder="Mar-23" required>
         </div>
         <div class="small">
             <label for="rating" >Change Rating</label>
-            <input type="number"  name="rating" placeholder="Rating.." min="1" max="5" step="0.1" >
+            <input type="number"  name="rating" placeholder="Rating.." min="1" max="5" step="0.1" required>
             </div>
             <div class="small">
             <label for="Price" >Change Price</label>
-            <input type="number"  name="price" placeholder="Price.." min="1" max="500" >
+            <input type="number"  name="price" placeholder="Price.." min="1" max="500" required>
             </div>
             
             <div class="small">
             <label for="seats" >Add Seats</label>
-            <input type="number"  name="seats" placeholder="Seats.." min="1" max="200" >
+            <input type="number"  name="seats" placeholder="Seats.." min="1" max="200" required>
             </div>
             
 
@@ -333,14 +333,12 @@
                     const headers = { "Authorization": `Bearer ${token}` };
                     axios.delete(`/api/show/${ids[0]}/${ids[1]}/${ids[2]}`,{ headers })
                         .then(response => {
-                            // Handle successful deletion if the server returns a response
                             console.log('Show deleted successfully!', response.data);
                             return axios.get('/api/update_show_data');
                         }).then(response => {
                             this.tableData = response.data;
                         })
                         .catch(error => {
-                            // Handle error if the deletion fails or server returns an error
                             console.error('Error deleting venue:', error);
                         });
                 },
@@ -358,7 +356,7 @@
                     .then(response => {this.tableData = response.data;})
                     .catch(error => {console.error('Error Adding show:', error.response.data.error)})
 
-                    // document.getElementById('addForm').reset();
+                    document.getElementById('addForm').reset();
                 },
                 update(){
                     event.preventDefault();
@@ -374,7 +372,8 @@
                     })
                     .then(response => {this.tableData = response.data;})
                     .catch(error => {console.error('Error Adding show:', error.response.data.error)})
-                 
+                   
+                    document.getElementById('updateForm').reset();
                 }
             }
             

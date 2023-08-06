@@ -437,7 +437,28 @@
         ::-webkit-scrollbar-thumb:hover {
             background: #555;
         }
+        
+        #blinker {
+            position:absolute;
+            width: 15px;
+            height: 15px;
+            opacity: 0.2;
+            background-color: red;
+            animation-name: blink;
+            animation-duration: 3s;
+            border-radius:900px;
+            animation-iteration-count: infinite;
+            z-index: 11;
+            left: 185px;
+            top: -18px;
+            display:none
+        }
 
+        @keyframes blink {
+            0% {opacity: 0.2;}
+            50% {opacity: 1;}
+            100% {opacity: 0.2;}
+        }
     </style>
 </head>
 
@@ -447,13 +468,14 @@
 <a href="/user_bookings/[[ current_user.username ]]" class="nav" id="booking">My Bookings</a>
 <a href="[[ url_for('logout') ]]" class="nav" id="logout">Logout</a>
     <div id="app" v-cloak style="position: relative; top: -20px;">
+        <div  id=blinker></div>
         <div id="banner">
             <img :src='banner'>
         </div>
         <div id="element"></div>
         <div id="poster"><img :src='poster'></div>
         <p id="title">{{ title }}</p>
-        <venue v-if="venues" v-for='venue in venues' :venue="venue"></venue>
+        <venue v-if="venues" v-for='venue in venues' :venue="venue" ></venue>
     </div>
     </div>
     <script>
@@ -626,6 +648,12 @@
 
                         this.$el.querySelector('#count').innerHTML = 0
                         this.count = 0
+
+                        window.scrollTo({
+                                            top: 0,
+                                            behavior: "smooth" 
+                                        });
+                        document.getElementById('blinker').style.display = 'block';
                     }
 
 
