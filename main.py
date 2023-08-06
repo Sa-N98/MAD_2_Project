@@ -432,13 +432,15 @@ def upload():
         poster_filename = secure_filename(poster_file.filename)
         if banner_filename.split('.')[-1].lower() in ['jpeg','png','jpg','webp']:
             banner_path = os.path.join(app.config['UPLOAD_FOLDER'], banner_filename)
-            banner_file.save('C:\\Users\\Sharonno\\Desktop\\MAD-2 project\\MAD_2_Project\\static\\Images\\'+banner_filename)
+            print(banner_filename)
+            print(current_dir)
+            banner_file.save(current_dir+'/static/Images/'+banner_filename)
         else:
             return jsonify(error="Invalid file extension for banner. Allowed extensions are: " + ', '.join(['jpeg','png','jpg','webp'])), 400
 
         if poster_filename.split('.')[-1].lower() in ['.jpeg','png','jpg','webp']:
             poster_path = os.path.join(app.config['UPLOAD_FOLDER'], poster_filename)
-            poster_file.save('C:\\Users\\Sharonno\\Desktop\\MAD-2 project\\MAD_2_Project\\static\\Images\\' + poster_filename)
+            poster_file.save(current_dir+'/static/Images/' + poster_filename)
         else:
             return jsonify(error="Invalid file extension for banner. Allowed extensions are: " + ', '.join(['jpeg','png','jpg','webp'])), 400
     
@@ -595,14 +597,14 @@ def monthley_report():
 celery.conf.beat_schedule = {
     'my_periodic_task_schedule': {
         'task': 'main.monthley_report', 
-        # 'schedule': timedelta(seconds=15) 
-        'schedule': crontab(day_of_month=1, hour=0, minute=0)
+        'schedule': timedelta(seconds=15) 
+        # 'schedule': crontab(day_of_month=1, hour=0, minute=0)
     },
 
     'my_dayley_task_schedule': {
         'task': 'main.send_daily_reminder', 
-        # 'schedule': timedelta(seconds=5) 
-        'schedule': crontab(hour=13, minute=20)
+        'schedule': timedelta(seconds=5) 
+        # 'schedule': crontab(hour=13, minute=20)
     },
 }
 
